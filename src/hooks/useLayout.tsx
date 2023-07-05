@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { Block } from '../types/Block'
+import { BlockShape } from '../types/Block'
 import { defaultBlockStyle, defaultRootStyle } from '../constants/const'
 
 const useLayout = () => {
 	const [layout, setLayout] = useState(
 		() =>
-			new Map<string, Block>([
+			new Map<string, BlockShape>([
 				['root', { id: 'root', style: defaultRootStyle, children: [] }],
 			])
 	)
 
-	const addBlock = async (block?: Block): Promise<string> => {
+	const addBlock = async (block?: BlockShape): Promise<string> => {
 		const newBlockKey = `${Math.random()}`
 		await setLayout((oldLayout) => {
 			const newLayout = new Map(
@@ -26,11 +26,11 @@ const useLayout = () => {
 		return newBlockKey
 	}
 
-	const getBlock = (key: string): Block | undefined => {
+	const getBlock = (key: string): BlockShape | undefined => {
 		return layout.get(key)
 	}
 
-	const updateBlock = async (key: string, block: Block) => {
+	const updateBlock = async (key: string, block: BlockShape) => {
 		await setLayout((oldLayout) => {
 			const newLayout = new Map(oldLayout.set(key, block))
 			return newLayout

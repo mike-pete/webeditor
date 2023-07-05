@@ -6,6 +6,7 @@ export const defaultBlockStyle: Style = {
 	minHeight: '100px',
 	padding: '10px',
 	margin: '10px',
+    borderRadius: '0.375rem',
 }
 
 export const defaultRootStyle: Style & FlexContainer = {

@@ -1,7 +1,7 @@
-export type Block = {
+export type BlockShape = {
 	id: string
 	style?: Style | (Style & FlexContainer)
-	children: Block[]
+	children: string[]
 }
 
 export type Style = {
@@ -15,6 +15,7 @@ export type Style = {
 	overflow?: string
 	flexShrink?: number
 	flexGrow?: number
+	borderRadius?: string
 }
 
 export type FlexContainer = {
