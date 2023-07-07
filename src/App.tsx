@@ -26,7 +26,7 @@ function App() {
 
 const Canvas: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	return (
-		<div className='bg-white resize overflow-auto rounded-md h-[500px] w-[500px] min-h-[100px] min-w-[100px] max-h-[90%] max-w-[90%] custom-scrollbar'>
+		<div className='bg-white resize overflow-auto rounded-md h-[500px] w-[500px] min-h-[320px] min-w-[320px] max-h-[90%] max-w-[90%] custom-scrollbar'>
 			{children}
 		</div>
 	)

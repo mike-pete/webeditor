@@ -63,8 +63,7 @@ const SideBar: React.FC<{
 
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-3 overflow-auto custom-scrollbar'>
-			<p>Settings</p>
-			<button onClick={addChildBlock}>+ Child Block</button>
+			<button onClick={addChildBlock} className='bg-neutral-700 cursor-pointer px-3 py-1 rounded-full text-center text-xs font-semibold'>+ block</button>
 			{Object.entries(properties).map(([key, value]) => {
 				return (
 					<Input
@@ -84,13 +83,18 @@ const Input: React.FC<{
 	value: Style[keyof Style]
 	updateStyle: (property: string, value: string) => void
 }> = ({ property, value, updateStyle }) => {
+
+    const label = useMemo(() => {
+        return property.split(/(?=[A-Z])/).join(' ').toLowerCase()
+    }, [property])
+
 	return (
 		<div className='flex flex-col my-2'>
 			<label
 				htmlFor={property}
 				className='text-xs font-semibold px-1 pt-1 pb-0.5'
 			>
-				{property}
+				{label}
 			</label>
 			<input
 				id={property}
