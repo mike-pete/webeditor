@@ -1,5 +1,6 @@
-import { FlexContainerInputs, StyleInputs } from '../constants/const'
-import { BlockShape, Style } from '../types/Block'
+import { useMemo } from 'react'
+import { FlexContainerInputs, StyleInputs, defaultBlockStyle } from '../constants/const'
+import { BlockShape, Style } from '../types/global'
 
 const SideBar: React.FC<{
 	selectedBlockID: string
@@ -26,14 +27,32 @@ const SideBar: React.FC<{
 	}
 
 	const updateStyle = (property: string, value: string) => {
+
+        const newStyle: Style = {...defaultBlockStyle, ...style, [property]: value}
+
 		updateBlock(selectedBlockID, {
 			id: selectedBlockID,
 			children: children ?? [],
-			style: { ...style, [property]: value },
+			style: newStyle,
 		})
 	}
 
-	const { style, children } = getBlock(selectedBlockID) ?? {}
+	const { style, children } = useMemo(() => {
+		const block: BlockShape = getBlock(selectedBlockID) ?? {
+			id: selectedBlockID,
+			style: defaultBlockStyle,
+			children: [],
+		}
+		return block
+	}, [selectedBlockID, getBlock])
+
+	const properties = useMemo(() => {
+		let properties: Record<string, any> = StyleInputs
+		if (style?.display === 'flex') {
+			properties = { ...properties, ...FlexContainerInputs }
+		}
+		return properties
+	}, [style])
 
 	if (!selectedBlockID)
 		return (
@@ -46,27 +65,16 @@ const SideBar: React.FC<{
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-3 overflow-auto custom-scrollbar'>
 			<p>Settings</p>
 			<button onClick={addChildBlock}>+ Child Block</button>
-			{Object.entries(StyleInputs).map(([key, value]) => {
+			{Object.entries(properties).map(([key, value]) => {
 				return (
 					<Input
-						key={key}
+						key={key + selectedBlockID}
 						property={key}
-						value={style?.[key as keyof Style]}
+						value={style?.[key as keyof Style] ?? defaultBlockStyle[key as keyof Style]}
 						updateStyle={updateStyle}
 					/>
 				)
 			})}
-			{style?.display === 'flex' &&
-				Object.entries(FlexContainerInputs).map(([key, value]) => {
-					return (
-						<Input
-							key={key}
-							property={key}
-							value={style?.[key as keyof Style]}
-							updateStyle={updateStyle}
-						/>
-					)
-				})}
 		</div>
 	)
 }

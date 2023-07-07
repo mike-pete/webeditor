@@ -7,18 +7,18 @@ export type BlockShape = {
 export type Style = BaseStyle | (BaseStyle & FlexContainer)
 
 export type BaseStyle = {
-	minHeight?: string
-	minWidth?: string
-	width?: string
-	height?: string
-	margin?: string
-	padding?: string
-	background?: string
-	overflow?: string
-	borderRadius?: string
-	flexShrink?: number
-	flexGrow?: number
-	display?: 'flex'
+	minHeight: string
+	minWidth: string
+	width: string
+	height: string
+	margin: string
+	padding: string
+	background: string
+	overflow: string
+	borderRadius: string
+	flexShrink: number
+	flexGrow: number
+	display: 'flex' | ''
 }
 
 export type FlexContainer = {

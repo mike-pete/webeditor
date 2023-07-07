@@ -1,5 +1,4 @@
-import { defaultBlockStyle } from '../constants/const'
-import { BlockShape } from '../types/Block'
+import { BlockShape } from '../types/global'
 
 const Block: React.FC<{
 	id: string
@@ -23,7 +22,7 @@ const Block: React.FC<{
 					'outline outline-4 outline-offset-[-4px] outline-sky-500'
 				}`
 			}
-			style={{ ...defaultBlockStyle, ...style }}
+			style={style}
 			onClick={handleClick}
 		>
 			{children?.map((id) => (

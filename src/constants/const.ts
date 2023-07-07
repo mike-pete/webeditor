@@ -1,15 +1,29 @@
-import { FlexContainer, BaseStyle } from '../types/Block'
+import { BlockShape } from '../types/global'
+import { FlexContainer, BaseStyle } from '../types/global'
 
 export const defaultBlockStyle: BaseStyle = {
 	background: 'rgba(156, 163, 175, 0.5)',
-	width: '100px',
+	minWidth: '100px',
 	minHeight: '100px',
 	padding: '10px',
 	margin: '10px',
 	borderRadius: '0.375rem',
+	overflow: 'auto',
+	width: '',
+	height: '',
+	flexShrink: 0,
+	flexGrow: 0,
+	display: '',
+}
+
+export const defaultBlock: BlockShape = {
+	id: '',
+	style: defaultBlockStyle,
+	children: [],
 }
 
 export const defaultRootStyle: BaseStyle & FlexContainer = {
+	...defaultBlockStyle,
 	background: 'white',
 	height: '100%',
 	width: '100%',

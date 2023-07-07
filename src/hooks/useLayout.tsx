@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BlockShape } from '../types/Block'
+import { BlockShape } from '../types/global'
 import { defaultBlockStyle, defaultRootStyle } from '../constants/const'
 
 const useLayout = () => {
