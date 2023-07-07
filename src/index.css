@@ -13,27 +13,27 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-	width: 15px;
+	width: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-	background: theme('colors.neutral.100');
+	background: theme('colors.neutral.700');
 	border-radius: 5px;
-  border-radius: 50%;
+	border-radius: 16px;
+	margin: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-	background-color: theme('colors.slate.400');
-	border-radius: 14px;
-	border: 2px solid theme('colors.neutral.100');
+	background-color: theme('colors.neutral.500');
+	border-radius: 16px;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
 }

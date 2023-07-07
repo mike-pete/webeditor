@@ -1,10 +1,12 @@
 export type BlockShape = {
 	id: string
-	style?: Style | (Style & FlexContainer)
+	style?: Style
 	children: string[]
 }
 
-export type Style = {
+export type Style = BaseStyle | (BaseStyle & FlexContainer)
+
+export type BaseStyle = {
 	minHeight?: string
 	minWidth?: string
 	width?: string
@@ -13,9 +15,10 @@ export type Style = {
 	padding?: string
 	background?: string
 	overflow?: string
+	borderRadius?: string
 	flexShrink?: number
 	flexGrow?: number
-	borderRadius?: string
+	display?: 'flex'
 }
 
 export type FlexContainer = {
