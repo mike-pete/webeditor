@@ -64,7 +64,7 @@ const SideBar: React.FC<{
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-3 overflow-auto custom-scrollbar'>
 			<button onClick={addChildBlock} className='bg-neutral-700 cursor-pointer px-3 py-1 rounded-full text-center text-xs font-semibold'>+ block</button>
-			{Object.entries(properties).map(([key, value]) => {
+			{Object.entries(properties).map(([key]) => {
 				return (
 					<Input
 						key={key + selectedBlockID}
