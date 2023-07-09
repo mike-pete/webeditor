@@ -1,19 +1,29 @@
-import { BlockShape } from '../types/global'
+import {
+	ALIGN_CONTENT_OPTIONS,
+	ALIGN_ITEMS_OPTIONS,
+	BlockShape,
+	DISPLAY_OPTIONS,
+	FLEX_DIRECTION_OPTIONS,
+	FLEX_WRAP_OPTIONS,
+	JUSTIFY_CONTENT_OPTIONS,
+} from '../types/global'
 import { FlexContainer, BaseStyle } from '../types/global'
 
 export const defaultBlockStyle: BaseStyle = {
 	background: 'rgba(156, 163, 175, 0.5)',
 	minWidth: '100px',
 	minHeight: '100px',
-	padding: '10px',
+	maxHeight: '',
+	maxWidth: '',
+	width: '',
+	height: '',
+	padding: '',
 	margin: '10px',
 	borderRadius: '0.375rem',
 	overflow: 'auto',
-	width: '',
-	height: '',
 	flexShrink: 0,
 	flexGrow: 0,
-	display: '',
+	display: 'block',
 }
 
 export const defaultBlock: BlockShape = {
@@ -33,41 +43,28 @@ export const defaultRootStyle: BaseStyle & FlexContainer = {
 	flexDirection: 'column',
 }
 
-export const StyleInputs: Record<string, string> = {
-	display: 'string',
+export const StyleInputs: Record<string, string | string[]> = {
+	display: DISPLAY_OPTIONS,
 	minHeight: 'string',
 	minWidth: 'string',
 	width: 'string',
 	height: 'string',
+	maxWidth: 'string',
+	maxHeight: 'string',
 	margin: 'string',
 	padding: 'string',
 	background: 'string',
 	overflow: 'string',
 	borderRadius: 'string',
-	// flexShrink: number,
-	// flexGrow?: number,
+	flexShrink: 'number',
+	flexGrow: 'number',
 }
 
 export const FlexContainerInputs: Record<string, string | string[]> = {
-	display: 'flex',
-	flexDirection: ['row', 'column'],
-	flexWrap: ['nowrap', 'wrap'],
-	justifyContent: [
-		'flex-start',
-		'flex-end',
-		'center',
-		'space-between',
-		'space-around',
-		'space-evenly',
-	],
-	alignItems: ['flex-start', 'flex-end', 'center', 'baseline', 'stretch'],
-	alignContent: [
-		'flex-start',
-		'flex-end',
-		'center',
-		'space-between',
-		'space-around',
-		'stretch',
-	],
+	flexDirection: FLEX_DIRECTION_OPTIONS,
+	flexWrap: FLEX_WRAP_OPTIONS,
+	justifyContent: JUSTIFY_CONTENT_OPTIONS,
+	alignItems: ALIGN_ITEMS_OPTIONS,
+	alignContent: ALIGN_CONTENT_OPTIONS,
 	gap: 'string',
 }

@@ -11,6 +11,8 @@ export type BaseStyle = {
 	minWidth: string
 	width: string
 	height: string
+	maxWidth: string
+	maxHeight: string
 	margin: string
 	padding: string
 	background: string
@@ -18,27 +20,47 @@ export type BaseStyle = {
 	borderRadius: string
 	flexShrink: number
 	flexGrow: number
-	display: 'flex' | ''
+	display: typeof DISPLAY_OPTIONS[number]
 }
+
+export const DISPLAY_OPTIONS = ['block','flex',]
+
+export const FLEX_DIRECTION_OPTIONS = ['row', 'column']
+
+export const FLEX_WRAP_OPTIONS = ['nowrap', 'wrap']
+
+export const JUSTIFY_CONTENT_OPTIONS = [
+	'flex-start',
+	'flex-end',
+	'center',
+	'space-between',
+	'space-around',
+	'space-evenly',
+]
+
+export const ALIGN_ITEMS_OPTIONS = [
+	'flex-start',
+	'flex-end',
+	'center',
+	'baseline',
+	'stretch',
+]
+
+export const ALIGN_CONTENT_OPTIONS = [
+	'flex-start',
+	'flex-end',
+	'center',
+	'space-between',
+	'space-around',
+	'stretch',
+]
 
 export type FlexContainer = {
 	display: 'flex'
-	flexDirection?: 'row' | 'column'
-	flexWrap?: 'nowrap' | 'wrap'
-	justifyContent?:
-		| 'flex-start'
-		| 'flex-end'
-		| 'center'
-		| 'space-between'
-		| 'space-around'
-		| 'space-evenly'
-	alignItems?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch'
-	alignContent?:
-		| 'flex-start'
-		| 'flex-end'
-		| 'center'
-		| 'space-between'
-		| 'space-around'
-		| 'stretch'
+	flexDirection?: typeof FLEX_DIRECTION_OPTIONS[number]
+	flexWrap?: typeof FLEX_WRAP_OPTIONS[number]
+	justifyContent?: typeof JUSTIFY_CONTENT_OPTIONS[number]
+	alignItems?: typeof ALIGN_ITEMS_OPTIONS[number]
+	alignContent?: typeof ALIGN_CONTENT_OPTIONS[number]
 	gap?: string
 }
