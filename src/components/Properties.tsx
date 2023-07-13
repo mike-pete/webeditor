@@ -6,7 +6,7 @@ import {
 } from '../constants/const'
 import { BlockShape, Style } from '../types/global'
 
-const SideBar: React.FC<{
+const Properties: React.FC<{
 	selectedBlockID: string
 	addBlock: (block?: BlockShape) => Promise<string>
 	getBlock: (key: string) => BlockShape | undefined
@@ -201,4 +201,4 @@ const SelectInput: React.FC<{
 	)
 }
 
-export default SideBar
+export default Properties

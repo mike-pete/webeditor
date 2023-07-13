@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import useLayout from './hooks/useLayout'
 import Block from './components/Block'
-import SideBar from './components/SideBar'
+import Properties from './components/Properties'
+import Structure from './components/Structure'
 
 function App() {
 	const { addBlock, getBlock, updateBlock } = useLayout()
@@ -9,6 +10,7 @@ function App() {
 
 	return (
 		<div className='flex flex-nowrap h-screen'>
+			<Structure {...{ selectedBlockID, addBlock, getBlock, updateBlock }} />
 			<Preview>
 				<Canvas>
 					<Block
@@ -19,7 +21,7 @@ function App() {
 					/>
 				</Canvas>
 			</Preview>
-			<SideBar {...{ selectedBlockID, addBlock, getBlock, updateBlock }} />
+			<Properties {...{ selectedBlockID, addBlock, getBlock, updateBlock }} />
 		</div>
 	)
 }
