@@ -5,7 +5,7 @@ const Structure: React.FC<{
 	addBlock: (block?: BlockShape) => Promise<string>
 	getBlock: (key: string) => BlockShape | undefined
 	updateBlock: (key: string, block: BlockShape) => void
-}> = ({ selectedBlockID, addBlock, getBlock, updateBlock }) => {
+}> = ({ getBlock }) => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1'>
 			<Level id='root' getBlock={getBlock} />
