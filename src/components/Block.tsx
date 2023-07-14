@@ -22,7 +22,7 @@ const Block: React.FC<{
 					'outline outline-4 outline-offset-[-4px] outline-sky-500'
 				}`
 			}
-			style={style}
+			style={style ?? {}}
 			onClick={handleClick}
 		>
 			{children?.map((id) => (
