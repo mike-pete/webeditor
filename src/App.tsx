@@ -10,7 +10,7 @@ function App() {
 
 	return (
 		<div className='flex flex-nowrap h-screen'>
-			<Structure {...{ selectedBlockID, addBlock, getBlock, updateBlock }} />
+			<Structure {...{ selectedBlockID, setSelectedBlockID, getBlock }} />
 			<Preview>
 				<Canvas>
 					<Block

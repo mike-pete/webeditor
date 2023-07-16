@@ -54,7 +54,7 @@ const Properties: React.FC<{
 	}, [selectedBlockID, getBlock])
 
 	const properties = useMemo(() => {
-		let properties: Record<string, any> = StyleInputs
+		let properties = StyleInputs
 		if (style?.display === 'flex') {
 			properties = { ...properties, ...FlexContainerInputs }
 		}

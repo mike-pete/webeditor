@@ -5,11 +5,12 @@ import 'material-symbols'
 
 const Structure: React.FC<{
 	selectedBlockID: string
+	setSelectedBlockID: (newID: string) => void
 	getBlock: (key: string) => BlockShape | undefined
-}> = ({ selectedBlockID, getBlock }) => {
+}> = (props) => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1'>
-			<Level id='root' selectedBlockID={selectedBlockID} getBlock={getBlock} />
+			<Level id='root' {...props} />
 		</div>
 	)
 }
@@ -17,9 +18,10 @@ const Structure: React.FC<{
 const Level: React.FC<{
 	id: string
 	selectedBlockID: string
+	setSelectedBlockID: (newID: string) => void
 	getBlock: (key: string) => BlockShape | undefined
 	indentation?: number
-}> = ({ id, selectedBlockID, getBlock }) => {
+}> = ({ id, selectedBlockID, setSelectedBlockID, getBlock }) => {
 	const { children } = getBlock(id) ?? defaultBlock
 
 	const [expanded, setExpanded] = useState(true)
@@ -28,8 +30,13 @@ const Level: React.FC<{
 		setExpanded((prev) => !prev)
 	}
 
+	const handleClick = (event: React.MouseEvent) => {
+		event.stopPropagation()
+		setSelectedBlockID(id)
+	}
+
 	return (
-		<div>
+		<div onClick={handleClick}>
 			<div
 				className={`hover:bg-neutral-800 py-0.5 cursor-pointer rounded flex items-center select-none ${
 					id == selectedBlockID && '!bg-neutral-700'
@@ -56,7 +63,7 @@ const Level: React.FC<{
 			{expanded && (
 				<div className='ml-5'>
 					{children?.map((id) => (
-						<Level {...{ id, selectedBlockID, getBlock }} key={id} />
+						<Level {...{ id, selectedBlockID, setSelectedBlockID, getBlock }} key={id} />
 					))}
 				</div>
 			)}
