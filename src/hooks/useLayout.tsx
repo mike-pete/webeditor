@@ -36,9 +36,13 @@ const useLayout = () => {
 		return newBlockKey
 	}
 
-	const addChildBlock = async (parentBlockID?: string) => {
+	const addChildBlock = async (
+		parentBlockID?: string,
+		childIndex?: number,
+		block?: Partial<BlockShape>
+	) => {
 		parentBlockID = parentBlockID ?? selectedBlockID
-		const newBlockID = await addBlock({ parent: parentBlockID })
+		const newBlockID = await addBlock({ parent: parentBlockID, ...block })
 		const newBlock = getBlock(newBlockID)
 
 		if (newBlock) {
@@ -47,10 +51,16 @@ const useLayout = () => {
 				console.error(`block [${selectedBlockID}] not found`)
 				return
 			}
-			updateBlock(selectedBlockID, {
-				...parentBlock,
-				id: selectedBlockID,
-				children: [...parentBlock.children, newBlockID],
+
+			const newChildren = [...parentBlock.children]
+			if (childIndex !== undefined) {
+				newChildren.splice(childIndex, 0, newBlockID)
+			} else {
+				newChildren.push(newBlockID)
+			}
+
+			updateBlock(parentBlockID, {
+				children: newChildren,
 			})
 		}
 	}

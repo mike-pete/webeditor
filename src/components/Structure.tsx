@@ -7,7 +7,11 @@ const Structure: React.FC<{
 	selectedBlockID: string
 	setSelectedBlockID: (newID: string) => void
 	getBlock: (key: string) => BlockShape | undefined
-	addChildBlock: (parentBlockID?:string) => void
+	addChildBlock: (
+		parentBlockID?: string,
+		childIndex?: number,
+		block?: Partial<BlockShape>
+	) => void
 }> = (props) => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1'>
@@ -21,9 +25,14 @@ const Level: React.FC<{
 	selectedBlockID: string
 	setSelectedBlockID: (newID: string) => void
 	getBlock: (key: string) => BlockShape | undefined
-	addChildBlock: (parentBlockID?:string) => void
+	addChildBlock: (
+		parentBlockID?: string,
+		childIndex?: number,
+		block?: Partial<BlockShape>
+	) => void
 }> = ({ id, selectedBlockID, setSelectedBlockID, getBlock, addChildBlock }) => {
-	const { children } = getBlock(id) ?? defaultBlock
+	const blockData = getBlock(id) ?? defaultBlock
+	const { children, parent } = blockData
 
 	const [expanded, setExpanded] = useState(true)
 
@@ -36,10 +45,20 @@ const Level: React.FC<{
 		setSelectedBlockID(id)
 	}
 
+	const parentBlock = getBlock(parent)
+
+	const duplicate = () => {
+		const currentBlockChildPosition =
+			parentBlock?.children.findIndex((currBlockID) => currBlockID === id) ?? 0
+
+		const newBlockData = { ...blockData, children: [] }
+		addChildBlock(parent, currentBlockChildPosition + 1, newBlockData)
+	}
+
 	return (
 		<div onClick={handleClick}>
 			<div
-				className={`hover:bg-neutral-800 py-0.5 cursor-pointer rounded flex items-center select-none ${
+				className={`hover:bg-neutral-800 py-0.5 pr-2 cursor-pointer rounded flex items-center select-none group ${
 					id == selectedBlockID && '!bg-neutral-700'
 				}`}
 			>
@@ -59,12 +78,29 @@ const Level: React.FC<{
 				<span className='material-symbols-outlined text-xs'>
 					{children.length ? 'view_comfy_alt' : 'square'}
 				</span>
-				<p className='ml-2'>block</p>
+				<p className='ml-2 flex-grow'>block</p>
+				{id !== 'root' && (
+					<span
+						className='material-symbols-outlined text-sm hidden group-hover:block'
+						onClick={duplicate}
+					>
+						copy_all
+					</span>
+				)}
 			</div>
 			{expanded && (
 				<div className='ml-5'>
 					{children?.map((id) => (
-						<Level {...{ id, selectedBlockID, setSelectedBlockID, getBlock, addChildBlock }} key={id} />
+						<Level
+							{...{
+								id,
+								selectedBlockID,
+								setSelectedBlockID,
+								getBlock,
+								addChildBlock,
+							}}
+							key={id}
+						/>
 					))}
 				</div>
 			)}
