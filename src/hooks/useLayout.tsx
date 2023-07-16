@@ -3,6 +3,8 @@ import { BlockShape } from '../types/global'
 import { defaultBlockStyle, defaultRootStyle } from '../constants/const'
 
 const useLayout = () => {
+	const [selectedBlockID, setSelectedBlockID] = useState<string>('root')
+
 	const [layout, setLayout] = useState(
 		() =>
 			new Map<string, BlockShape>([
@@ -26,6 +28,24 @@ const useLayout = () => {
 		return newBlockKey
 	}
 
+	const addChildBlock = async (parentBlockID?:string) => {
+		const newBlockID = await addBlock()
+		const newBlock = getBlock(newBlockID)
+
+		if (newBlock) {
+			const parentBlock = getBlock(parentBlockID ?? selectedBlockID)
+			if (!parentBlock) {
+				console.error(`block [${selectedBlockID}] not found`)
+				return
+			}
+			updateBlock(selectedBlockID, {
+				...parentBlock,
+				id: selectedBlockID,
+				children: [...parentBlock.children, newBlockID],
+			})
+		}
+	}
+
 	const getBlock = (key: string): BlockShape | undefined => {
 		return layout.get(key)
 	}
@@ -37,7 +57,7 @@ const useLayout = () => {
 		})
 	}
 
-	return { addBlock, getBlock, updateBlock }
+	return { addChildBlock, getBlock, updateBlock, selectedBlockID, setSelectedBlockID }
 }
 
 export default useLayout

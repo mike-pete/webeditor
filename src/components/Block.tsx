@@ -3,14 +3,14 @@ import { BlockShape } from '../types/global'
 const Block: React.FC<{
 	id: string
 	getBlock: (id: string) => BlockShape | undefined
-	select: (data: string) => void
-	selectedID: string
-}> = ({ id, getBlock, select, selectedID }) => {
+	setSelectedBlockID: (data: string) => void
+	selectedBlockID: string
+}> = ({ id, getBlock, setSelectedBlockID, selectedBlockID }) => {
 	const { style, children } = getBlock(id) ?? {}
 
 	const handleClick = (event: React.MouseEvent) => {
 		event.stopPropagation()
-		select(id)
+		setSelectedBlockID(id)
 	}
 
 	return (
@@ -18,7 +18,7 @@ const Block: React.FC<{
 			className={
 				'hide-scrollbar cursor-pointer' +
 				` ${
-					id === selectedID &&
+					id === selectedBlockID &&
 					'outline outline-4 outline-offset-[-4px] outline-sky-500'
 				}`
 			}
@@ -26,7 +26,7 @@ const Block: React.FC<{
 			onClick={handleClick}
 		>
 			{children?.map((id) => (
-				<Block {...{ id, getBlock, select, selectedID }} key={Math.random()} />
+				<Block {...{ id, getBlock, setSelectedBlockID, selectedBlockID }} key={id} />
 			))}
 		</div>
 	)

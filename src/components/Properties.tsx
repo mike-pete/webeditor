@@ -8,28 +8,10 @@ import { BlockShape, Style } from '../types/global'
 
 const Properties: React.FC<{
 	selectedBlockID: string
-	addBlock: (block?: BlockShape) => Promise<string>
 	getBlock: (key: string) => BlockShape | undefined
 	updateBlock: (key: string, block: BlockShape) => void
-}> = ({ selectedBlockID, addBlock, getBlock, updateBlock }) => {
-	const addChildBlock = async () => {
-		const newBlockID = await addBlock()
-		const newBlock = getBlock(newBlockID)
-
-		if (newBlock) {
-			const selectedBlock = getBlock(selectedBlockID)
-			if (!selectedBlock) {
-				console.error(`block [${selectedBlockID}] not found`)
-				return
-			}
-			updateBlock(selectedBlockID, {
-				...selectedBlock,
-				id: selectedBlockID,
-				children: [...(selectedBlock?.children ?? []), newBlockID],
-			})
-		}
-	}
-
+	addChildBlock: (parentBlockID?: string) => void
+}> = ({ selectedBlockID, addChildBlock, getBlock, updateBlock }) => {
 	const updateStyle = (property: string, value: string | number) => {
 		const newStyle: Style = {
 			...defaultBlockStyle,
@@ -71,7 +53,7 @@ const Properties: React.FC<{
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-3 overflow-auto custom-scrollbar'>
 			<button
-				onClick={addChildBlock}
+				onClick={() => addChildBlock()}
 				className='bg-neutral-700 cursor-pointer px-3 py-1 rounded-full text-center text-xs font-semibold'
 			>
 				+ block

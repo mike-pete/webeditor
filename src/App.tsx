@@ -1,27 +1,33 @@
-import { useState } from 'react'
 import useLayout from './hooks/useLayout'
 import Block from './components/Block'
 import Properties from './components/Properties'
 import Structure from './components/Structure'
 
 function App() {
-	const { addBlock, getBlock, updateBlock } = useLayout()
-	const [selectedBlockID, setSelectedBlockID] = useState<string>('root')
+	const {
+		addChildBlock,
+		getBlock,
+		updateBlock,
+		selectedBlockID,
+		setSelectedBlockID,
+	} = useLayout()
 
 	return (
 		<div className='flex flex-nowrap h-screen'>
-			<Structure {...{ selectedBlockID, setSelectedBlockID, getBlock }} />
+			<Structure
+				{...{ selectedBlockID, setSelectedBlockID, getBlock, addChildBlock }}
+			/>
 			<Preview>
 				<Canvas>
 					<Block
 						id={'root'}
-						getBlock={getBlock}
-						select={setSelectedBlockID}
-						selectedID={selectedBlockID}
+						{...{ getBlock, setSelectedBlockID, selectedBlockID }}
 					/>
 				</Canvas>
 			</Preview>
-			<Properties {...{ selectedBlockID, addBlock, getBlock, updateBlock }} />
+			<Properties
+				{...{ selectedBlockID, getBlock, updateBlock, addChildBlock }}
+			/>
 		</div>
 	)
 }

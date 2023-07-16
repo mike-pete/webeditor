@@ -7,6 +7,7 @@ const Structure: React.FC<{
 	selectedBlockID: string
 	setSelectedBlockID: (newID: string) => void
 	getBlock: (key: string) => BlockShape | undefined
+	addChildBlock: (parentBlockID?:string) => void
 }> = (props) => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1'>
@@ -20,8 +21,8 @@ const Level: React.FC<{
 	selectedBlockID: string
 	setSelectedBlockID: (newID: string) => void
 	getBlock: (key: string) => BlockShape | undefined
-	indentation?: number
-}> = ({ id, selectedBlockID, setSelectedBlockID, getBlock }) => {
+	addChildBlock: (parentBlockID?:string) => void
+}> = ({ id, selectedBlockID, setSelectedBlockID, getBlock, addChildBlock }) => {
 	const { children } = getBlock(id) ?? defaultBlock
 
 	const [expanded, setExpanded] = useState(true)
@@ -63,7 +64,7 @@ const Level: React.FC<{
 			{expanded && (
 				<div className='ml-5'>
 					{children?.map((id) => (
-						<Level {...{ id, selectedBlockID, setSelectedBlockID, getBlock }} key={id} />
+						<Level {...{ id, selectedBlockID, setSelectedBlockID, getBlock, addChildBlock }} key={id} />
 					))}
 				</div>
 			)}
