@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import {
 	FlexContainerInputs,
 	StyleInputs,
+	defaultBlock,
 	defaultBlockStyle,
 } from '../constants/const'
 import { BlockShape, Style } from '../types/global'
@@ -9,7 +10,7 @@ import { BlockShape, Style } from '../types/global'
 const Properties: React.FC<{
 	selectedBlockID: string
 	getBlock: (key: string) => BlockShape | undefined
-	updateBlock: (key: string, block: BlockShape) => void
+	updateBlock: (key: string, block: Partial<BlockShape>) => void
 	addChildBlock: (parentBlockID?: string) => void
 }> = ({ selectedBlockID, addChildBlock, getBlock, updateBlock }) => {
 	const updateStyle = (property: string, value: string | number) => {
@@ -20,19 +21,12 @@ const Properties: React.FC<{
 		}
 
 		updateBlock(selectedBlockID, {
-			id: selectedBlockID,
-			children: children ?? [],
 			style: newStyle,
 		})
 	}
 
-	const { style, children } = useMemo(() => {
-		const block: BlockShape = getBlock(selectedBlockID) ?? {
-			id: selectedBlockID,
-			style: defaultBlockStyle,
-			children: [],
-		}
-		return block
+	const { style } = useMemo(() => {
+		return {...defaultBlock, ...getBlock(selectedBlockID)}
 	}, [selectedBlockID, getBlock])
 
 	const properties = useMemo(() => {

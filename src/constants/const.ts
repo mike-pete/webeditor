@@ -30,6 +30,7 @@ export const defaultBlock: BlockShape = {
 	id: '',
 	style: defaultBlockStyle,
 	children: [],
+	parent: ''
 }
 
 export const defaultRootStyle: BaseStyle & FlexContainer = {

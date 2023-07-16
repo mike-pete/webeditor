@@ -2,6 +2,7 @@ export type BlockShape = {
 	id: string
 	style?: Style
 	children: string[]
+	parent: string
 }
 
 export type Style = BaseStyle | (BaseStyle & FlexContainer)

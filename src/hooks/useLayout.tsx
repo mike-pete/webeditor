@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { BlockShape } from '../types/global'
-import { defaultBlockStyle, defaultRootStyle } from '../constants/const'
+import {
+	defaultBlock,
+	defaultBlockStyle,
+	defaultRootStyle,
+} from '../constants/const'
 
 const useLayout = () => {
 	const [selectedBlockID, setSelectedBlockID] = useState<string>('root')
@@ -8,11 +12,14 @@ const useLayout = () => {
 	const [layout, setLayout] = useState(
 		() =>
 			new Map<string, BlockShape>([
-				['root', { id: 'root', style: defaultRootStyle, children: [] }],
+				[
+					'root',
+					{ id: 'root', style: defaultRootStyle, children: [], parent: '' },
+				],
 			])
 	)
 
-	const addBlock = async (block?: BlockShape): Promise<string> => {
+	const addBlock = async (block?: Partial<BlockShape>): Promise<string> => {
 		const newBlockKey = `${Math.random()}`
 		await setLayout((oldLayout) => {
 			const newLayout = new Map(
@@ -20,6 +27,7 @@ const useLayout = () => {
 					id: newBlockKey,
 					style: defaultBlockStyle,
 					children: [],
+					parent: '',
 					...block,
 				})
 			)
@@ -28,12 +36,13 @@ const useLayout = () => {
 		return newBlockKey
 	}
 
-	const addChildBlock = async (parentBlockID?:string) => {
-		const newBlockID = await addBlock()
+	const addChildBlock = async (parentBlockID?: string) => {
+		parentBlockID = parentBlockID ?? selectedBlockID
+		const newBlockID = await addBlock({ parent: parentBlockID })
 		const newBlock = getBlock(newBlockID)
 
 		if (newBlock) {
-			const parentBlock = getBlock(parentBlockID ?? selectedBlockID)
+			const parentBlock = getBlock(parentBlockID)
 			if (!parentBlock) {
 				console.error(`block [${selectedBlockID}] not found`)
 				return
@@ -50,14 +59,23 @@ const useLayout = () => {
 		return layout.get(key)
 	}
 
-	const updateBlock = async (key: string, block: BlockShape) => {
-		await setLayout((oldLayout) => {
-			const newLayout = new Map(oldLayout.set(key, block))
+	const updateBlock = (key: string, block: Partial<BlockShape>) => {
+		setLayout((oldLayout) => {
+			const oldBlock = oldLayout.get(key)
+			const newLayout = new Map(
+				oldLayout.set(key, { ...defaultBlock, ...oldBlock, ...block })
+			)
 			return newLayout
 		})
 	}
 
-	return { addChildBlock, getBlock, updateBlock, selectedBlockID, setSelectedBlockID }
+	return {
+		addChildBlock,
+		getBlock,
+		updateBlock,
+		selectedBlockID,
+		setSelectedBlockID,
+	}
 }
 
 export default useLayout
