@@ -12,6 +12,7 @@ const Structure: React.FC<{
 		childIndex?: number,
 		block?: Partial<BlockShape>
 	) => void
+	deepDeleteBlock: (blockID: string) => void
 }> = (props) => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1'>
@@ -30,7 +31,16 @@ const Level: React.FC<{
 		childIndex?: number,
 		block?: Partial<BlockShape>
 	) => void
-}> = ({ id, selectedBlockID, setSelectedBlockID, getBlock, addChildBlock }) => {
+	deepDeleteBlock: (blockID: string) => void
+}> = (props) => {
+	const {
+		id,
+		selectedBlockID,
+		setSelectedBlockID,
+		getBlock,
+		addChildBlock,
+		deepDeleteBlock,
+	} = props
 	const blockData = getBlock(id) ?? defaultBlock
 	const { children, parent } = blockData
 
@@ -80,27 +90,29 @@ const Level: React.FC<{
 				</span>
 				<p className='ml-2 flex-grow'>block</p>
 				{id !== 'root' && (
-					<span
-						className='material-symbols-outlined text-sm hidden group-hover:block'
-						onClick={duplicate}
-					>
-						copy_all
-					</span>
+					<>
+						<span
+							className='material-symbols-outlined text-sm hidden group-hover:block'
+							onClick={duplicate}
+						>
+							copy_all
+						</span>
+						<span
+							className='material-symbols-outlined text-sm hidden group-hover:block'
+							onClick={(event) => {
+								event.stopPropagation()
+								deepDeleteBlock(id)
+							}}
+						>
+							delete
+						</span>
+					</>
 				)}
 			</div>
 			{expanded && (
 				<div className='ml-5'>
 					{children?.map((id) => (
-						<Level
-							{...{
-								id,
-								selectedBlockID,
-								setSelectedBlockID,
-								getBlock,
-								addChildBlock,
-							}}
-							key={id}
-						/>
+						<Level {...{ ...props, id }} key={id} />
 					))}
 				</div>
 			)}

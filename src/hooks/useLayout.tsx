@@ -19,9 +19,9 @@ const useLayout = () => {
 			])
 	)
 
-	const addBlock = async (block?: Partial<BlockShape>): Promise<string> => {
+	const addBlock = async (block?: Partial<BlockShape>) => {
 		const newBlockKey = `${Math.random()}`
-		await setLayout((oldLayout) => {
+		setLayout((oldLayout) => {
 			const newLayout = new Map(
 				oldLayout.set(newBlockKey, {
 					id: newBlockKey,
@@ -69,13 +69,66 @@ const useLayout = () => {
 		return layout.get(key)
 	}
 
-	const updateBlock = (key: string, block: Partial<BlockShape>) => {
+	const updateBlock = (id: string, block: Partial<BlockShape>) => {
 		setLayout((oldLayout) => {
-			const oldBlock = oldLayout.get(key)
+			const oldBlock = oldLayout.get(id)
 			const newLayout = new Map(
-				oldLayout.set(key, { ...defaultBlock, ...oldBlock, ...block })
+				oldLayout.set(id, { ...defaultBlock, ...oldBlock, ...block })
 			)
 			return newLayout
+		})
+	}
+
+	const traverseAllChildrenBlocks = async (
+		parentID: string,
+		callback?: (block: BlockShape) => void
+	) => {
+		const toTraverse = new Set([parentID])
+
+		while (toTraverse.size > 0) {
+			const currentBlockID = toTraverse.values().next().value
+			toTraverse.delete(currentBlockID)
+			const currentBlock = getBlock(currentBlockID)
+			if (currentBlock) {
+				currentBlock.children.forEach((childID) => {
+					toTraverse.add(childID)
+				})
+				callback?.(currentBlock)
+			}
+		}
+	}
+
+	const deepDeleteBlock = (blockID: string) => {
+		const block = getBlock(blockID)
+
+		setSelectedBlockID((currSelected) => {
+			if (currSelected === blockID) {
+				return block?.parent ?? 'root'
+			}
+			return currSelected
+		})
+
+		if (block?.parent) {
+			const parentBlock = getBlock(block.parent)
+			if (parentBlock) {
+				const newChildren = parentBlock.children.filter(
+					(childID) => childID !== blockID
+				)
+				updateBlock(parentBlock.id, { children: newChildren })
+			}
+		}
+
+		const children: string[] = []
+
+		traverseAllChildrenBlocks(blockID, (block) => {
+			children.push(block.id)
+		})
+
+		setLayout((oldLayout) => {
+			children.forEach((childID) => {
+				oldLayout.delete(childID)
+			})
+			return oldLayout
 		})
 	}
 
@@ -85,6 +138,7 @@ const useLayout = () => {
 		updateBlock,
 		selectedBlockID,
 		setSelectedBlockID,
+		deepDeleteBlock,
 	}
 }
 

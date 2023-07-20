@@ -10,12 +10,19 @@ function App() {
 		updateBlock,
 		selectedBlockID,
 		setSelectedBlockID,
+		deepDeleteBlock,
 	} = useLayout()
 
 	return (
 		<div className='flex flex-nowrap h-screen'>
 			<Structure
-				{...{ selectedBlockID, setSelectedBlockID, getBlock, addChildBlock }}
+				{...{
+					selectedBlockID,
+					setSelectedBlockID,
+					getBlock,
+					addChildBlock,
+					deepDeleteBlock,
+				}}
 			/>
 			<Preview>
 				<Canvas>
