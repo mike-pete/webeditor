@@ -58,16 +58,6 @@ const Level: React.FC<{
 		setSelectedBlockID(id)
 	}
 
-	const parentBlock = getBlock(parent)
-
-	const duplicate = () => {
-		const currentBlockChildPosition =
-			parentBlock?.children.findIndex((currBlockID) => currBlockID === id) ?? 0
-
-		const newBlockData = { ...blockData, children: [] }
-		addChildBlock(parent, currentBlockChildPosition + 1, newBlockData)
-	}
-
 	return (
 		<div onClick={handleClick}>
 			<div
