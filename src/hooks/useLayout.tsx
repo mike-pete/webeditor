@@ -19,8 +19,10 @@ const useLayout = () => {
 			])
 	)
 
+	const generateBlockID = () => Math.random().toString()
+
 	const addBlock = async (block?: Partial<BlockShape>) => {
-		const newBlockKey = `${Math.random()}`
+		const newBlockKey = generateBlockID()
 		setLayout((oldLayout) => {
 			const newLayout = new Map(
 				oldLayout.set(newBlockKey, {
@@ -53,7 +55,7 @@ const useLayout = () => {
 			}
 
 			const newChildren = [...parentBlock.children]
-			if (childIndex !== undefined) {
+			if (childIndex !== undefined && childIndex > -1) {
 				newChildren.splice(childIndex, 0, newBlockID)
 			} else {
 				newChildren.push(newBlockID)
@@ -132,6 +134,66 @@ const useLayout = () => {
 		})
 	}
 
+	const deepDuplicateBlock = (blockID: string) => {
+		const block = getBlock(blockID)
+		const parentBlockID = block?.parent ?? 'root'
+
+		const originalIDtoNewID = new Map<string, string>([
+			[parentBlockID, parentBlockID],
+		])
+		const newBlocks = new Map<string, BlockShape>()
+
+		// duplicate blocks
+		traverseAllChildrenBlocks(blockID, (block) => {
+			const newBlockID = generateBlockID()
+			originalIDtoNewID.set(block.id, newBlockID)
+			newBlocks.set(newBlockID, {
+				...block,
+				id: newBlockID,
+			})
+		})
+
+		// re-map children and parents to new IDs
+		newBlocks.forEach((block) => {
+			block.children = block.children.map((childID) => {
+				return originalIDtoNewID.get(childID) ?? ''
+			})
+
+			block.parent = originalIDtoNewID.get(block.parent) ?? 'root'
+		})
+
+		const parentBlock = getBlock(parentBlockID)
+		const duplicatedBlockID = originalIDtoNewID.get(blockID)
+
+		if (parentBlock && duplicatedBlockID) {
+			setLayout((oldLayout) => {
+				const newLayout = new Map(oldLayout)
+
+				// insert duplicated block at correct position in parent's children
+				const newChildren = [...parentBlock.children]
+				const insertionIndex = newChildren.findIndex((id) => id === blockID)
+
+				if (insertionIndex !== -1) {
+					newChildren.splice(insertionIndex + 1, 0, duplicatedBlockID)
+				} else {
+					newChildren.push(duplicatedBlockID)
+				}
+
+				newLayout.set(parentBlockID, {
+					...parentBlock,
+					children: newChildren,
+				})
+
+				// insert new blocks into layout
+				newBlocks.forEach((block) => {
+					newLayout.set(block.id, block)
+				})
+
+				return newLayout
+			})
+		}
+	}
+
 	return {
 		addChildBlock,
 		getBlock,
@@ -139,6 +201,7 @@ const useLayout = () => {
 		selectedBlockID,
 		setSelectedBlockID,
 		deepDeleteBlock,
+		deepDuplicateBlock,
 	}
 }
 

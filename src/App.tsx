@@ -11,6 +11,7 @@ function App() {
 		selectedBlockID,
 		setSelectedBlockID,
 		deepDeleteBlock,
+		deepDuplicateBlock,
 	} = useLayout()
 
 	return (
@@ -22,6 +23,7 @@ function App() {
 					getBlock,
 					addChildBlock,
 					deepDeleteBlock,
+					deepDuplicateBlock,
 				}}
 			/>
 			<Preview>

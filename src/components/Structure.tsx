@@ -13,6 +13,7 @@ const Structure: React.FC<{
 		block?: Partial<BlockShape>
 	) => void
 	deepDeleteBlock: (blockID: string) => void
+	deepDuplicateBlock: (blockID: string) => void
 }> = (props) => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1'>
@@ -32,6 +33,7 @@ const Level: React.FC<{
 		block?: Partial<BlockShape>
 	) => void
 	deepDeleteBlock: (blockID: string) => void
+	deepDuplicateBlock: (blockID: string) => void
 }> = (props) => {
 	const {
 		id,
@@ -40,6 +42,7 @@ const Level: React.FC<{
 		getBlock,
 		addChildBlock,
 		deepDeleteBlock,
+		deepDuplicateBlock,
 	} = props
 	const blockData = getBlock(id) ?? defaultBlock
 	const { children, parent } = blockData
@@ -93,7 +96,10 @@ const Level: React.FC<{
 					<>
 						<span
 							className='material-symbols-outlined text-sm hidden group-hover:block'
-							onClick={duplicate}
+							onClick={(event) => {
+								event.stopPropagation()
+								deepDuplicateBlock(id)
+							}}
 						>
 							copy_all
 						</span>
