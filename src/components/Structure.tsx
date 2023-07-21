@@ -45,7 +45,7 @@ const Level: React.FC<{
 		deepDuplicateBlock,
 	} = props
 	const blockData = getBlock(id) ?? defaultBlock
-	const { children, parent } = blockData
+	const { children } = blockData
 
 	const [expanded, setExpanded] = useState(true)
 
@@ -82,6 +82,15 @@ const Level: React.FC<{
 					{children.length ? 'view_comfy_alt' : 'square'}
 				</span>
 				<p className='ml-2 flex-grow'>block</p>
+				<span
+					className='material-symbols-outlined text-sm hidden group-hover:block'
+					onClick={(event) => {
+						event.stopPropagation()
+						addChildBlock(id)
+					}}
+				>
+					add
+				</span>
 				{id !== 'root' && (
 					<>
 						<span
