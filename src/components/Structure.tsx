@@ -16,7 +16,7 @@ const Structure: React.FC<{
 	deepDuplicateBlock: (blockID: string) => void
 }> = (props) => {
 	return (
-		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1'>
+		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1 overflow-auto custom-scrollbar'>
 			<Level id='root' {...props} />
 		</div>
 	)
