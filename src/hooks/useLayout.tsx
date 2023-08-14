@@ -147,19 +147,20 @@ const useLayout = () => {
 		traverseAllChildrenBlocks(blockID, (block) => {
 			const newBlockID = generateBlockID()
 			originalIDtoNewID.set(block.id, newBlockID)
+
+			const parentID = originalIDtoNewID.get(block.parent) ?? 'root'
+			const parent = newBlocks.get(parentID)
+
+			if (parent) {
+				parent.children.push(newBlockID)
+			}
+
 			newBlocks.set(newBlockID, {
 				...block,
+				parent: parentID,
+				children: [],
 				id: newBlockID,
 			})
-		})
-
-		// re-map children and parents to new IDs
-		newBlocks.forEach((block) => {
-			block.children = block.children.map((childID) => {
-				return originalIDtoNewID.get(childID) ?? ''
-			})
-
-			block.parent = originalIDtoNewID.get(block.parent) ?? 'root'
 		})
 
 		const parentBlock = getBlock(parentBlockID)

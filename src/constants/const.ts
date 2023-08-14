@@ -11,18 +11,18 @@ import { FlexContainer, BaseStyle } from '../types/global'
 
 export const defaultBlockStyle: BaseStyle = {
 	background: 'rgba(156, 163, 175, 0.5)',
-	minWidth: '100px',
-	minHeight: '100px',
+	minWidth: '50px',
+	minHeight: '50px',
 	maxHeight: '',
 	maxWidth: '',
 	width: '',
 	height: '',
-	padding: '',
-	margin: '10px',
-	borderRadius: '0.375rem',
+	padding: '10px',
+	margin: '',
+	borderRadius: '4px',
 	overflow: 'auto',
-	flexShrink: 0,
-	flexGrow: 0,
+	flexShrink: '0',
+	flexGrow: '0',
 	display: 'block',
 }
 
@@ -30,11 +30,11 @@ export const defaultBlock: BlockShape = {
 	id: '',
 	style: defaultBlockStyle,
 	children: [],
-	parent: ''
+	parent: '',
 }
 
-export const defaultRootStyle: BaseStyle & FlexContainer = {
-	...defaultBlockStyle,
+export const defaultRootStyle = {
+	justifyContent: 'flex-start',
 	background: 'white',
 	height: '100%',
 	width: '100%',
@@ -42,9 +42,11 @@ export const defaultRootStyle: BaseStyle & FlexContainer = {
 	overflow: 'auto',
 	display: 'flex',
 	flexDirection: 'column',
+	gap: '20px',
+	padding: '20px',
 }
 
-export const StyleInputs: Record<string, string | string[]> = {
+export const StyleInputTypes: Record<string, string | string[]> = {
 	display: DISPLAY_OPTIONS,
 	minHeight: 'string',
 	minWidth: 'string',
@@ -59,9 +61,6 @@ export const StyleInputs: Record<string, string | string[]> = {
 	borderRadius: 'string',
 	flexShrink: 'number',
 	flexGrow: 'number',
-}
-
-export const FlexContainerInputs: Record<string, string | string[]> = {
 	flexDirection: FLEX_DIRECTION_OPTIONS,
 	flexWrap: FLEX_WRAP_OPTIONS,
 	justifyContent: JUSTIFY_CONTENT_OPTIONS,

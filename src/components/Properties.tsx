@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import {
-	FlexContainerInputs,
-	StyleInputs,
+	StyleInputTypes,
 	defaultBlock,
 	defaultBlockStyle,
 } from '../constants/const'
@@ -13,7 +12,7 @@ const Properties: React.FC<{
 	updateBlock: (key: string, block: Partial<BlockShape>) => void
 	addChildBlock: (parentBlockID?: string) => void
 }> = ({ selectedBlockID, addChildBlock, getBlock, updateBlock }) => {
-	const updateStyle = (property: string, value: string | number) => {
+	const updateStyle = (property: string, value: string) => {
 		const newStyle: Style = {
 			...defaultBlockStyle,
 			...style,
@@ -26,16 +25,8 @@ const Properties: React.FC<{
 	}
 
 	const { style } = useMemo(() => {
-		return {...defaultBlock, ...getBlock(selectedBlockID)}
+		return { ...defaultBlock, ...getBlock(selectedBlockID) }
 	}, [selectedBlockID, getBlock])
-
-	const properties = useMemo(() => {
-		let properties = StyleInputs
-		if (style?.display === 'flex') {
-			properties = { ...properties, ...FlexContainerInputs }
-		}
-		return properties
-	}, [style])
 
 	if (!selectedBlockID)
 		return (
@@ -52,7 +43,7 @@ const Properties: React.FC<{
 			>
 				+ block
 			</button>
-			{Object.entries(properties).map(([key, valueOptions]) => {
+			{Object.entries(StyleInputTypes).map(([key, valueOptions]) => {
 				return (
 					<Input
 						key={key + selectedBlockID}
@@ -73,21 +64,20 @@ const Properties: React.FC<{
 const Input: React.FC<{
 	property: string
 	value: Style[keyof Style]
-	updateStyle: (property: string, value: string | number) => void
+	updateStyle: (property: string, value: string) => void
 	valueOptions: string | string[]
 }> = ({ property, value, updateStyle, valueOptions }) => {
 	const label = useMemo(() => {
 		return property
 			.split(/(?=[A-Z])/)
-			.join(' ')
+			.join('-')
 			.toLowerCase()
 	}, [property])
 
-	const handleUpdate = (newValue: string | number) =>
-		updateStyle(property, newValue)
+	const handleUpdate = (newValue: string) => updateStyle(property, newValue)
 
 	return (
-		<div className='flex flex-col my-2'>
+		<div className='grid grid-cols-2 my-2'>
 			<label
 				htmlFor={property}
 				className='text-xs font-semibold px-1 pt-1 pb-0.5'
@@ -97,21 +87,21 @@ const Input: React.FC<{
 			{valueOptions === 'string' && (
 				<StringInput
 					property={property}
-					value={String(value)}
+					value={String(value ?? '')}
 					onChange={handleUpdate}
 				/>
 			)}
 			{valueOptions === 'number' && (
-				<NumberInput
+				<StringInput
 					property={property}
-					value={Number(value)}
+					value={String(Number(value))}
 					onChange={handleUpdate}
 				/>
 			)}
 			{Array.isArray(valueOptions) && (
 				<SelectInput
 					property={property}
-					value={String(value)}
+					value={String(value ?? '')}
 					onChange={handleUpdate}
 					valueOptions={valueOptions}
 				/>
@@ -132,22 +122,6 @@ const StringInput: React.FC<{
 			type='text'
 			value={value}
 			onChange={(e) => onChange(e.target.value)}
-		/>
-	)
-}
-
-const NumberInput: React.FC<{
-	property: string
-	value: number
-	onChange: (newValue: number) => void
-}> = ({ property, value, onChange }) => {
-	return (
-		<input
-			id={property}
-			className='py-1 px-2 rounded text-neutral-100 bg-neutral-700 text-xs'
-			type='number'
-			value={value}
-			onChange={(e) => onChange(Number(e.target.value))}
 		/>
 	)
 }

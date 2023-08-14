@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import { BlockShape } from '../types/global'
 
 const Block: React.FC<{
@@ -22,7 +23,7 @@ const Block: React.FC<{
 					'outline outline-4 outline-offset-[-4px] outline-sky-500'
 				}`
 			}
-			style={style ?? {}}
+			style={style as CSSProperties}
 			onClick={handleClick}
 		>
 			{children?.map((id) => (

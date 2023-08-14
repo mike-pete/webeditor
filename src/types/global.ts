@@ -5,7 +5,7 @@ export type BlockShape = {
 	parent: string
 }
 
-export type Style = BaseStyle | (BaseStyle & FlexContainer)
+export type Style = BaseStyle | (BaseStyle & FlexContainer) | Record<string, string | string[]>
 
 export type BaseStyle = {
 	minHeight: string
@@ -19,8 +19,8 @@ export type BaseStyle = {
 	background: string
 	overflow: string
 	borderRadius: string
-	flexShrink: number
-	flexGrow: number
+	flexShrink: string
+	flexGrow: string
 	display: typeof DISPLAY_OPTIONS[number]
 }
 
