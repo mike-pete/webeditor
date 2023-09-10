@@ -6,7 +6,7 @@ import {
 	defaultBlockStyle,
 	defaultRootStyle,
 } from '../constants/const'
-import useSelectedBlockID from '../stores/selectedBlockID'
+import useSelectedBlockID from '../stores/useSelectedBlockID'
 
 const generateBlockID = () => Math.random().toString()
 
@@ -42,12 +42,6 @@ const useLayout = () => {
 			])
 	)
 
-	const addBlock = async (block?: Partial<BlockShape>) => {
-		const newBlock = createNewBlock(block)
-		setLayout((layout) => new Map(layout.set(newBlock.id, newBlock)))
-		return newBlock
-	}
-
 	const addChildBlock = async (
 		parentBlockID: string = selectedBlockID,
 		childIndex?: number,
@@ -61,7 +55,8 @@ const useLayout = () => {
 		}
 
 		// create new block
-		const newBlock = await addBlock({ parent: parentBlockID, ...block })
+		const newBlock = createNewBlock(block)
+		setLayout((layout) => new Map(layout.set(newBlock.id, newBlock)))
 
 		// insert new block id into parent's children array
 		const newChildren = [...parentBlock.children]
