@@ -16,6 +16,7 @@ function App() {
 
 	return (
 		<div className='flex flex-nowrap h-screen'>
+			{/* left sidebar to display component hierarchy */}
 			<Structure
 				{...{
 					selectedBlockID,
@@ -26,6 +27,7 @@ function App() {
 					deepDuplicateBlock,
 				}}
 			/>
+			{/* render the page preview */}
 			<Preview>
 				<Canvas>
 					<Block
@@ -34,6 +36,7 @@ function App() {
 					/>
 				</Canvas>
 			</Preview>
+			{/* left sidebar to display and edit CSS properties */}
 			<Properties
 				{...{ selectedBlockID, getBlock, updateBlock, addChildBlock }}
 			/>

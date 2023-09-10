@@ -1,70 +1,76 @@
 import { useState } from 'react'
 import { BlockShape } from '../types/global'
 import {
+	RootBlockId,
 	defaultBlock,
 	defaultBlockStyle,
 	defaultRootStyle,
 } from '../constants/const'
 
-const useLayout = () => {
-	const [selectedBlockID, setSelectedBlockID] = useState<string>('root')
+const generateBlockID = () => Math.random().toString()
 
+const createNewBlock = (block?: Partial<BlockShape>): BlockShape => {
+	const newBlockKey = generateBlockID()
+	return {
+		style: defaultBlockStyle,
+		children: [],
+		parent: '',
+		...block,
+		id: newBlockKey,
+	}
+}
+
+const useLayout = () => {
+	// set up state
+	const [selectedBlockID, setSelectedBlockID] = useState<string>(RootBlockId)
 	const [layout, setLayout] = useState(
 		() =>
 			new Map<string, BlockShape>([
 				[
-					'root',
-					{ id: 'root', style: defaultRootStyle, children: [], parent: '' },
+					RootBlockId,
+					{
+						id: RootBlockId,
+						style: defaultRootStyle,
+						children: [],
+						parent: '',
+					},
 				],
 			])
 	)
 
-	const generateBlockID = () => Math.random().toString()
-
 	const addBlock = async (block?: Partial<BlockShape>) => {
-		const newBlockKey = generateBlockID()
-		setLayout((oldLayout) => {
-			const newLayout = new Map(
-				oldLayout.set(newBlockKey, {
-					id: newBlockKey,
-					style: defaultBlockStyle,
-					children: [],
-					parent: '',
-					...block,
-				})
-			)
-			return newLayout
-		})
-		return newBlockKey
+		const newBlock = createNewBlock(block)
+		setLayout((layout) => new Map(layout.set(newBlock.id, newBlock)))
+		return newBlock
 	}
 
 	const addChildBlock = async (
-		parentBlockID?: string,
+		parentBlockID: string = selectedBlockID,
 		childIndex?: number,
 		block?: Partial<BlockShape>
 	) => {
-		parentBlockID = parentBlockID ?? selectedBlockID
-		const newBlockID = await addBlock({ parent: parentBlockID, ...block })
-		const newBlock = getBlock(newBlockID)
-
-		if (newBlock) {
-			const parentBlock = getBlock(parentBlockID)
-			if (!parentBlock) {
-				console.error(`block [${selectedBlockID}] not found`)
-				return
-			}
-
-			const newChildren = [...parentBlock.children]
-			if (childIndex !== undefined && childIndex > -1) {
-				newChildren.splice(childIndex, 0, newBlockID)
-			} else {
-				newChildren.push(newBlockID)
-			}
-
-			updateBlock(parentBlockID, {
-				children: newChildren,
-			})
+		// make sure parent block is valid
+		const parentBlock = getBlock(parentBlockID)
+		if (!parentBlock) {
+			console.error(`block [${parentBlockID}] not found`)
+			return
 		}
+
+		// create new block
+		const newBlock = await addBlock({ parent: parentBlockID, ...block })
+
+		// insert new block id into parent's children array
+		const newChildren = [...parentBlock.children]
+		if (childIndex !== undefined && childIndex > -1) {
+			newChildren.splice(childIndex, 0, newBlock.id)
+		} else {
+			newChildren.push(newBlock.id)
+		}
+
+		// save changes to parent block
+		updateBlock(parentBlockID, {
+			children: newChildren,
+		})
 	}
 
 	const getBlock = (key: string): BlockShape | undefined => {
@@ -72,16 +78,14 @@ const useLayout = () => {
 	}
 
 	const updateBlock = (id: string, block: Partial<BlockShape>) => {
-		setLayout((oldLayout) => {
-			const oldBlock = oldLayout.get(id)
-			const newLayout = new Map(
-				oldLayout.set(id, { ...defaultBlock, ...oldBlock, ...block })
-			)
-			return newLayout
+		setLayout((layout) => {
+			const oldBlock = layout.get(id)
+			return new Map(layout.set(id, { ...defaultBlock, ...oldBlock, ...block }))
 		})
 	}
 
-	const traverseAllChildrenBlocks = async (
+	// breadth-first traversal of block and all its children
+	const traverseBlockAndAllChildBlocks = async (
 		parentID: string,
 		callback?: (block: BlockShape) => void
 	) => {
@@ -90,6 +94,7 @@ const useLayout = () => {
 		while (toTraverse.size > 0) {
 			const currentBlockID = toTraverse.values().next().value
 			toTraverse.delete(currentBlockID)
+
 			const currentBlock = getBlock(currentBlockID)
 			if (currentBlock) {
 				currentBlock.children.forEach((childID) => {
@@ -103,13 +108,12 @@ const useLayout = () => {
 	const deepDeleteBlock = (blockID: string) => {
 		const block = getBlock(blockID)
 
-		setSelectedBlockID((currSelected) => {
-			if (currSelected === blockID) {
-				return block?.parent ?? 'root'
-			}
-			return currSelected
-		})
+		// if block is selected, select parent block or root
+		if (selectedBlockID === blockID) {
+			setSelectedBlockID(block?.parent ?? RootBlockId)
+		}
 
+		// remove block from parent's children array
 		if (block?.parent) {
 			const parentBlock = getBlock(block.parent)
 			if (parentBlock) {
@@ -120,23 +124,25 @@ const useLayout = () => {
 			}
 		}
 
+		// create a list of all blocks to delete
 		const children: string[] = []
-
-		traverseAllChildrenBlocks(blockID, (block) => {
+		traverseBlockAndAllChildBlocks(blockID, (block) => {
 			children.push(block.id)
 		})
 
-		setLayout((oldLayout) => {
+		// delete all blocks in list
+		setLayout((layout) => {
+			const newLayout = new Map(layout)
 			children.forEach((childID) => {
-				oldLayout.delete(childID)
+				newLayout.delete(childID)
 			})
-			return oldLayout
+			return newLayout
 		})
 	}
 
 	const deepDuplicateBlock = (blockID: string) => {
 		const block = getBlock(blockID)
-		const parentBlockID = block?.parent ?? 'root'
+		const parentBlockID = block?.parent ?? RootBlockId
 
 		const originalIDtoNewID = new Map<string, string>([
 			[parentBlockID, parentBlockID],
@@ -144,31 +150,31 @@ const useLayout = () => {
 		const newBlocks = new Map<string, BlockShape>()
 
 		// duplicate blocks
-		traverseAllChildrenBlocks(blockID, (block) => {
-			const newBlockID = generateBlockID()
-			originalIDtoNewID.set(block.id, newBlockID)
-
-			const parentID = originalIDtoNewID.get(block.parent) ?? 'root'
+		traverseBlockAndAllChildBlocks(blockID, (block) => {
+			const parentID = originalIDtoNewID.get(block.parent) ?? RootBlockId
 			const parent = newBlocks.get(parentID)
 
-			if (parent) {
-				parent.children.push(newBlockID)
-			}
-
-			newBlocks.set(newBlockID, {
+			const newBlock = createNewBlock({
 				...block,
 				parent: parentID,
 				children: [],
-				id: newBlockID,
 			})
+			
+			originalIDtoNewID.set(block.id, newBlock.id)
+
+			if (parent) {
+				parent.children.push(newBlock.id)
+			}
+
+			newBlocks.set(newBlock.id, newBlock)
 		})
 
 		const parentBlock = getBlock(parentBlockID)
 		const duplicatedBlockID = originalIDtoNewID.get(blockID)
 
 		if (parentBlock && duplicatedBlockID) {
-			setLayout((oldLayout) => {
-				const newLayout = new Map(oldLayout)
+			setLayout((layout) => {
+				const newLayout = new Map(layout)
 
 				// insert duplicated block at correct position in parent's children
 				const newChildren = [...parentBlock.children]
