@@ -6,7 +6,6 @@ import {
 	defaultBlockStyle,
 	defaultRootStyle,
 } from '../constants/const'
-import useSelectedBlockID from '../stores/useSelectedBlockID'
 
 const generateBlockID = () => Math.random().toString()
 
@@ -22,11 +21,7 @@ const createNewBlock = (block?: Partial<BlockShape>): BlockShape => {
 }
 
 const useLayout = () => {
-	const selectedBlockID = useSelectedBlockID((state) => state.selectedBlockID)
-	const setSelectedBlockID = useSelectedBlockID(
-		(state) => state.setSelectedBlockID
-	)
-
+	const [selectedBlockID, setSelectedBlockID] = useState<string>(RootBlockId)
 	const [layout, setLayout] = useState(
 		() =>
 			new Map<string, BlockShape>([
