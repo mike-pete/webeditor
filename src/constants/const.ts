@@ -7,7 +7,7 @@ import {
 	FLEX_WRAP_OPTIONS,
 	JUSTIFY_CONTENT_OPTIONS,
 } from '../types/global'
-import { FlexContainer, BaseStyle } from '../types/global'
+import { BaseStyle } from '../types/global'
 
 export const defaultBlockStyle: BaseStyle = {
 	background: 'rgba(156, 163, 175, 0.5)',
@@ -68,3 +68,5 @@ export const StyleInputTypes: Record<string, string | string[]> = {
 	alignContent: ALIGN_CONTENT_OPTIONS,
 	gap: 'string',
 }
+
+export const RootBlockId = 'root'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { defaultBlock } from '../constants/const'
+import { RootBlockId, defaultBlock } from '../constants/const'
 import { BlockShape } from '../types/global'
 import 'material-symbols'
 
@@ -17,7 +17,7 @@ const Structure: React.FC<{
 }> = (props) => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1 overflow-auto custom-scrollbar'>
-			<Level id='root' {...props} />
+			<Level id={RootBlockId} {...props} />
 		</div>
 	)
 }
@@ -91,7 +91,7 @@ const Level: React.FC<{
 				>
 					add
 				</span>
-				{id !== 'root' && (
+				{id !== RootBlockId && (
 					<>
 						<span
 							className='material-symbols-outlined text-sm hidden group-hover:block'
