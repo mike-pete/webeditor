@@ -4,7 +4,6 @@ import 'material-symbols'
 import { useLayout } from '../stores/useLayout'
 
 const Structure: React.FC<{
-	deepDeleteBlock: (blockID: string) => void
 	deepDuplicateBlock: (blockID: string) => void
 }> = (props) => {
 	return (
@@ -16,19 +15,23 @@ const Structure: React.FC<{
 
 const Level: React.FC<{
 	id: string
-	deepDeleteBlock: (blockID: string) => void
 	deepDuplicateBlock: (blockID: string) => void
 }> = (props) => {
-	const { id, deepDeleteBlock, deepDuplicateBlock } = props
+	const { id, deepDuplicateBlock } = props
 
+	const block = useLayout((state) => state.layout[id])
 	const addChildBlock = useLayout((state) => state.addChildBlock)
-	const blockData = useLayout((state) => state.layout[id])
 	const selectedBlockID = useLayout((state) => state.selectedBlockID)
 	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
-
-	const { children } = blockData
+	const deepDeleteBlock = useLayout((state) => state.deepDeleteBlock)
 
 	const [expanded, setExpanded] = useState(true)
+
+	if (!block) {
+		return null
+	}
+
+	const { children } = block
 
 	const toggleExpanded = () => {
 		setExpanded((prev) => !prev)

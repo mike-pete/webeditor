@@ -4,9 +4,15 @@ import { useLayout } from '../stores/useLayout'
 const Block: React.FC<{
 	id: string
 }> = ({ id }) => {
-	const { style, children } = useLayout((state) => state.layout[id])
+	const block = useLayout((state) => state.layout[id])
 	const selectedBlockID = useLayout((state) => state.selectedBlockID)
 	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
+
+	if (!block) {
+		return null
+	}
+
+	const { style, children } = block
 
 	const handleClick = (event: React.MouseEvent) => {
 		event.stopPropagation()

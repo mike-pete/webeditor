@@ -15,6 +15,12 @@ type Action = {
 		block?: Partial<BlockShape>
 	) => void
 	updateBlock: (id: string, block: Partial<BlockShape>) => void
+	traverseBlockAndAllChildBlocks: (
+		id: string,
+		callback?: (block: BlockShape) => void
+	) => void
+	deepDeleteBlock: (blockID: string) => void
+	// deepDuplicateBlock: (blockID: string) => void
 }
 
 export const useLayout = create<State & Action>((set, get) => ({
@@ -42,7 +48,7 @@ export const useLayout = create<State & Action>((set, get) => ({
 			return
 		}
 
-		const newBlock = createNewBlock(block)
+		const newBlock = createNewBlock({ ...block, parent: parentBlockID })
 
 		// insert new block id into parent's children array
 		const newParentChildren = [...parentBlock.children]
@@ -73,8 +79,53 @@ export const useLayout = create<State & Action>((set, get) => ({
 				},
 			},
 		})),
-}))
+	// breadth-first traversal of block and all its children
+	traverseBlockAndAllChildBlocks: (id, callback) => {
+		const toTraverse = new Set([id])
 
-// return {
-//     layout: {}
-// }
+		while (toTraverse.size > 0) {
+			const currentBlockID = toTraverse.values().next().value
+			toTraverse.delete(currentBlockID)
+
+			const currentBlock = get().layout[currentBlockID]
+			if (currentBlock) {
+				currentBlock.children.forEach((childID) => {
+					toTraverse.add(childID)
+				})
+				callback?.(currentBlock)
+			}
+		}
+	},
+	deepDeleteBlock: (id: string) => {
+		const block = get().layout[id]
+		let selectedBlockID = get().selectedBlockID
+
+		// create a new layout and remove sub-blocks
+		const newLayout = get().layout
+		get().traverseBlockAndAllChildBlocks(id, (block) => {
+			delete newLayout[block.id]
+		})
+
+		if (block?.parent) {
+			if (newLayout[block.parent]) {
+				// remove block from parent's children array
+				newLayout[block.parent].children = newLayout[
+					block.parent
+				].children.filter((childID) => childID !== id)
+			}
+		}
+
+		// if the selected block was deleted select a new block
+		if (!(selectedBlockID in newLayout)) {
+			selectedBlockID = block?.parent ?? RootBlockId
+		}
+
+		set(() => ({
+			selectedBlockID,
+			layout: newLayout,
+		}))
+	},
+	// deepDuplicateBlock: (id: string) => {
+
+	// },
+}))

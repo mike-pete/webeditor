@@ -6,14 +6,13 @@ import { useCallback, useEffect, useState } from 'react'
 import useWindowResizeListener from './hooks/useWindowResizeListener'
 
 function App() {
-	const { deepDeleteBlock, deepDuplicateBlock } = useLayout()
+	const { deepDuplicateBlock } = useLayout()
 
 	return (
 		<div className='flex flex-nowrap h-screen'>
 			{/* left sidebar to display component hierarchy */}
 			<Structure
 				{...{
-					deepDeleteBlock,
 					deepDuplicateBlock,
 				}}
 			/>
