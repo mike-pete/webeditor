@@ -20,7 +20,7 @@ type Action = {
 		callback?: (block: BlockShape) => void
 	) => void
 	deepDeleteBlock: (blockID: string) => void
-	// deepDuplicateBlock: (blockID: string) => void
+	deepDuplicateBlock: (blockID: string) => void
 }
 
 export const useLayout = create<State & Action>((set, get) => ({
@@ -125,7 +125,68 @@ export const useLayout = create<State & Action>((set, get) => ({
 			layout: newLayout,
 		}))
 	},
-	// deepDuplicateBlock: (id: string) => {
+	deepDuplicateBlock: (id: string) => {
+		const block = get().layout[id]
+		const parentBlockID = block?.parent ?? RootBlockId
 
-	// },
+		const originalIDtoNewID = new Map<string, string>([
+			[parentBlockID, parentBlockID],
+		])
+		const newBlocks = new Map<string, BlockShape>()
+
+		// duplicate blocks
+		get().traverseBlockAndAllChildBlocks(id, (block) => {
+			const parentID = originalIDtoNewID.get(block.parent) ?? RootBlockId
+			const parent = newBlocks.get(parentID)
+
+			const newBlock = createNewBlock({
+				...block,
+				parent: parentID,
+				children: [],
+			})
+
+			originalIDtoNewID.set(block.id, newBlock.id)
+
+			if (parent) {
+				parent.children.push(newBlock.id)
+			}
+
+			newBlocks.set(newBlock.id, newBlock)
+		})
+
+		const parentBlock = get().layout[parentBlockID]
+		const duplicatedBlockID = originalIDtoNewID.get(id)
+
+		if (parentBlock && duplicatedBlockID) {
+			set(() => {
+				const newLayout = get().layout
+
+				// insert duplicated block at correct position in parent's children
+				const newChildren = [...parentBlock.children]
+				const insertionIndex = newChildren.findIndex(
+					(childId) => childId === id
+				)
+
+				if (insertionIndex !== -1) {
+					newChildren.splice(insertionIndex + 1, 0, duplicatedBlockID)
+				} else {
+					newChildren.push(duplicatedBlockID)
+				}
+
+				newLayout[parentBlockID] = {
+					...parentBlock,
+					children: newChildren,
+				}
+
+				// insert new blocks into layout
+				newBlocks.forEach((block) => {
+					newLayout[block.id] = block
+				})
+
+				return {
+					layout: newLayout,
+				}
+			})
+		}
+	},
 }))

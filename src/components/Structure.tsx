@@ -3,27 +3,23 @@ import { RootBlockId } from '../constants/const'
 import 'material-symbols'
 import { useLayout } from '../stores/useLayout'
 
-const Structure: React.FC<{
-	deepDuplicateBlock: (blockID: string) => void
-}> = (props) => {
+const Structure: React.FC = () => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1 overflow-auto custom-scrollbar'>
-			<Level id={RootBlockId} {...props} />
+			<Level id={RootBlockId} />
 		</div>
 	)
 }
 
 const Level: React.FC<{
 	id: string
-	deepDuplicateBlock: (blockID: string) => void
-}> = (props) => {
-	const { id, deepDuplicateBlock } = props
-
+}> = ({ id }) => {
 	const block = useLayout((state) => state.layout[id])
 	const addChildBlock = useLayout((state) => state.addChildBlock)
 	const selectedBlockID = useLayout((state) => state.selectedBlockID)
 	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
 	const deepDeleteBlock = useLayout((state) => state.deepDeleteBlock)
+	const deepDuplicateBlock = useLayout((state) => state.deepDuplicateBlock)
 
 	const [expanded, setExpanded] = useState(true)
 
@@ -101,7 +97,7 @@ const Level: React.FC<{
 			{expanded && (
 				<div className='ml-5'>
 					{children?.map((id) => (
-						<Level {...{ ...props, id }} key={id} />
+						<Level id={id} key={id} />
 					))}
 				</div>
 			)}

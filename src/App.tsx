@@ -1,4 +1,3 @@
-import useLayout from './hooks/useLayout'
 import Block from './components/Block'
 import Properties from './components/Properties'
 import Structure from './components/Structure'
@@ -6,16 +5,10 @@ import { useCallback, useEffect, useState } from 'react'
 import useWindowResizeListener from './hooks/useWindowResizeListener'
 
 function App() {
-	const { deepDuplicateBlock } = useLayout()
-
 	return (
 		<div className='flex flex-nowrap h-screen'>
 			{/* left sidebar to display component hierarchy */}
-			<Structure
-				{...{
-					deepDuplicateBlock,
-				}}
-			/>
+			<Structure />
 			{/* render the page preview */}
 			<Preview>
 				<Canvas>
