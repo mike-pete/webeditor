@@ -1,17 +1,9 @@
 import { useState } from 'react'
-import { RootBlockId, defaultBlock } from '../constants/const'
-import { BlockShape } from '../types/global'
+import { RootBlockId } from '../constants/const'
 import 'material-symbols'
+import { useLayout } from '../stores/useLayout'
 
 const Structure: React.FC<{
-	selectedBlockID: string
-	setSelectedBlockID: (newID: string) => void
-	getBlock: (key: string) => BlockShape | undefined
-	addChildBlock: (
-		parentBlockID?: string,
-		childIndex?: number,
-		block?: Partial<BlockShape>
-	) => void
 	deepDeleteBlock: (blockID: string) => void
 	deepDuplicateBlock: (blockID: string) => void
 }> = (props) => {
@@ -24,27 +16,16 @@ const Structure: React.FC<{
 
 const Level: React.FC<{
 	id: string
-	selectedBlockID: string
-	setSelectedBlockID: (newID: string) => void
-	getBlock: (key: string) => BlockShape | undefined
-	addChildBlock: (
-		parentBlockID?: string,
-		childIndex?: number,
-		block?: Partial<BlockShape>
-	) => void
 	deepDeleteBlock: (blockID: string) => void
 	deepDuplicateBlock: (blockID: string) => void
 }> = (props) => {
-	const {
-		id,
-		selectedBlockID,
-		setSelectedBlockID,
-		getBlock,
-		addChildBlock,
-		deepDeleteBlock,
-		deepDuplicateBlock,
-	} = props
-	const blockData = getBlock(id) ?? defaultBlock
+	const { id, deepDeleteBlock, deepDuplicateBlock } = props
+
+	const addChildBlock = useLayout((state) => state.addChildBlock)
+	const blockData = useLayout((state) => state.layout[id])
+	const selectedBlockID = useLayout((state) => state.selectedBlockID)
+	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
+
 	const { children } = blockData
 
 	const [expanded, setExpanded] = useState(true)

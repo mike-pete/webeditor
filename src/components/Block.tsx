@@ -1,13 +1,12 @@
 import { CSSProperties } from 'react'
-import { BlockShape } from '../types/global'
+import { useLayout } from '../stores/useLayout'
 
 const Block: React.FC<{
 	id: string
-	getBlock: (id: string) => BlockShape | undefined
-	setSelectedBlockID: (data: string) => void
-	selectedBlockID: string
-}> = ({ id, getBlock, setSelectedBlockID, selectedBlockID }) => {
-	const { style, children } = getBlock(id) ?? {}
+}> = ({ id }) => {
+	const { style, children } = useLayout((state) => state.layout[id])
+	const selectedBlockID = useLayout((state) => state.selectedBlockID)
+	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
 
 	const handleClick = (event: React.MouseEvent) => {
 		event.stopPropagation()
@@ -27,7 +26,7 @@ const Block: React.FC<{
 			onClick={handleClick}
 		>
 			{children?.map((id) => (
-				<Block {...{ id, getBlock, setSelectedBlockID, selectedBlockID }} key={id} />
+				<Block id={id} key={id} />
 			))}
 		</div>
 	)

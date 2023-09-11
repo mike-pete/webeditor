@@ -6,25 +6,13 @@ import { useCallback, useEffect, useState } from 'react'
 import useWindowResizeListener from './hooks/useWindowResizeListener'
 
 function App() {
-	const {
-		addChildBlock,
-		getBlock,
-		updateBlock,
-		selectedBlockID,
-		setSelectedBlockID,
-		deepDeleteBlock,
-		deepDuplicateBlock,
-	} = useLayout()
+	const { deepDeleteBlock, deepDuplicateBlock } = useLayout()
 
 	return (
 		<div className='flex flex-nowrap h-screen'>
 			{/* left sidebar to display component hierarchy */}
 			<Structure
 				{...{
-					selectedBlockID,
-					setSelectedBlockID,
-					getBlock,
-					addChildBlock,
 					deepDeleteBlock,
 					deepDuplicateBlock,
 				}}
@@ -32,16 +20,11 @@ function App() {
 			{/* render the page preview */}
 			<Preview>
 				<Canvas>
-					<Block
-						id={'root'}
-						{...{ getBlock, setSelectedBlockID, selectedBlockID }}
-					/>
+					<Block id={'root'} />
 				</Canvas>
 			</Preview>
 			{/* left sidebar to display and edit CSS properties */}
-			<Properties
-				{...{ selectedBlockID, getBlock, updateBlock, addChildBlock }}
-			/>
+			<Properties />
 		</div>
 	)
 }

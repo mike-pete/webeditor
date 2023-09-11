@@ -1,17 +1,14 @@
 import { useMemo } from 'react'
-import {
-	StyleInputTypes,
-	defaultBlock,
-	defaultBlockStyle,
-} from '../constants/const'
-import { BlockShape, Style } from '../types/global'
+import { StyleInputTypes, defaultBlockStyle } from '../constants/const'
+import { Style } from '../types/global'
+import { useLayout } from '../stores/useLayout'
 
-const Properties: React.FC<{
-	selectedBlockID: string
-	getBlock: (key: string) => BlockShape | undefined
-	updateBlock: (key: string, block: Partial<BlockShape>) => void
-	addChildBlock: (parentBlockID?: string) => void
-}> = ({ selectedBlockID, addChildBlock, getBlock, updateBlock }) => {
+const Properties: React.FC = () => {
+	const selectedBlockID = useLayout((state) => state.selectedBlockID)
+	const selectedBlock = useLayout((state) => state.layout[selectedBlockID])
+	const updateBlock = useLayout((state) => state.updateBlock)
+	const addChildBlock = useLayout((state) => state.addChildBlock)
+
 	const updateStyle = (property: string, value: string) => {
 		const newStyle: Style = {
 			...defaultBlockStyle,
@@ -24,9 +21,7 @@ const Properties: React.FC<{
 		})
 	}
 
-	const { style } = useMemo(() => {
-		return { ...defaultBlock, ...getBlock(selectedBlockID) }
-	}, [selectedBlockID, getBlock])
+	const style = { ...defaultBlockStyle, ...selectedBlock.style }
 
 	if (!selectedBlockID)
 		return (
