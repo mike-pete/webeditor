@@ -3,7 +3,7 @@ import { RootBlockId } from '../constants/const'
 import 'material-symbols'
 import { useLayout } from '../stores/useLayout'
 
-const Structure: React.FC = () => {
+const Hierarchy: React.FC = () => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1 overflow-auto custom-scrollbar'>
 			<Level id={RootBlockId} />
@@ -14,7 +14,7 @@ const Structure: React.FC = () => {
 const Level: React.FC<{
 	id: string
 }> = ({ id }) => {
-	const block = useLayout((state) => state.layout[id])
+	const children = useLayout((state) => state.layout[id].children)
 	const addChildBlock = useLayout((state) => state.addChildBlock)
 	const selectedBlockID = useLayout((state) => state.selectedBlockID)
 	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
@@ -23,11 +23,9 @@ const Level: React.FC<{
 
 	const [expanded, setExpanded] = useState(true)
 
-	if (!block) {
+	if (!children) {
 		return null
 	}
-
-	const { children } = block
 
 	const toggleExpanded = () => {
 		setExpanded((prev) => !prev)
@@ -105,4 +103,4 @@ const Level: React.FC<{
 	)
 }
 
-export default Structure
+export default Hierarchy
