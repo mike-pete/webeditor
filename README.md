@@ -1,6 +1,6 @@
 # Web Editor
 
-Sometimes you're tasked with building Figma designs that look great, but don't easily align with real-world CSS constraints, making them difficult to implement.
+Sometimes you're tasked with building Figma designs that look great, but don't easily align with real-world CSS constraints, making them challenging to implement.
 
 
 This POC aims to bridge the gap between design and development by allowing you create designs with CSS. This should make it simple to create designs that are easy to code.
