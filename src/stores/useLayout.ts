@@ -1,6 +1,7 @@
 import { create } from 'zustand'
+import { RootBlockId } from '../constants/const'
 import { BlockShape } from '../types/global'
-import { RootBlockId, defaultRootStyle } from '../constants/const'
+import initialLayout from './initialLayout'
 import { createNewBlock } from './useLayout.utils'
 
 type State = {
@@ -26,14 +27,7 @@ type Action = {
 export const useLayout = create<State & Action>((set, get) => ({
 	// STATE
 	selectedBlockID: 'root',
-	layout: {
-		[RootBlockId]: {
-			id: RootBlockId,
-			style: defaultRootStyle,
-			children: [],
-			parent: '',
-		},
-	},
+	layout: initialLayout,
 
 	// ACTIONS
 	setSelectedBlockID: (id) => set(() => ({ selectedBlockID: id })),
