@@ -5,7 +5,7 @@ import useGenerateHTML from '../hooks/useGenerateHTML'
 import { useLayout } from '../stores/useLayout'
 
 const Hierarchy: React.FC = () => {
-	const html = useGenerateHTML()
+	const html = useGenerateHTML('preview')
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1 overflow-auto custom-scrollbar'>
 			<Level id={RootBlockId} />

@@ -1,7 +1,7 @@
-import { useCallback } from "react"
-import { useLayout } from "../stores/useLayout"
+import { useCallback } from 'react'
+import { useLayout } from '../stores/useLayout'
 
-const useGenerateHTML = () => {
+const useGenerateHTML = (enviornment: 'design' | 'preview' = 'design') => {
 	const layout = useLayout((state) => state.layout)
 	console.log('layout', Object.keys(layout).length)
 	const generateHTML = useCallback(
@@ -17,7 +17,10 @@ const useGenerateHTML = () => {
 				childString = `\n${tab}${children.join(`\n${tab}`)}\n${'\t'.repeat(level - 1)}`
 			}
 
-			// return `<div style={${JSON.stringify(styles)}}>${childString}</div>`
+			if (enviornment === 'preview') {
+				return `<div style={${JSON.stringify(styles)}}>${childString}</div>`
+			}
+
 			return `
 <span onClick={
 		(event) => {

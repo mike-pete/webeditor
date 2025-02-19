@@ -6,7 +6,7 @@ import useWindowResizeListener from '../hooks/useWindowResizeListener'
 import { useLayout } from '../stores/useLayout'
 import Canvas from './Canvas'
 
-function Runner() {
+function Runner({ maxWidth }: { maxWidth: string }) {
 	const html = useGenerateHTML()
 	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
 
@@ -42,17 +42,18 @@ export default function Page() {
 	const [selectedComponent, setSelectedComponent] = useState('root')
 
 	return (
-		<>
+		<div className='min-h-screen h-screen'>
 			${html}
-		</>
+		</div>
 	)
 }
 				`,
 			}}
+			style={{ height: '100%' }}
 		>
-			<SandpackLayout style={{ backgroundColor: 'transparent', border: 'none' }}>
+			<SandpackLayout style={{ border: 'none', height: '100%', backgroundColor: 'transparent' }}>
 				<div className='flex flex-col gap-4 justify-center items-center w-full h-full'>
-					<div className='overflow-hidden rounded bg-red-500 p-1 resize'>
+					<div className='overflow-hidden rounded resize h-[90%] w-10/12' style={{ maxWidth }}>
 						<SandpackPreview
 							style={{ height: '100%' }}
 							showOpenInCodeSandbox={false}
@@ -94,7 +95,7 @@ const Preview: React.FC = () => {
 			</div>
 
 			<div className='h-full w-full bg-neutral-700'>
-				<Runner />
+				<Runner maxWidth={maxWidth} />
 			</div>
 		</div>
 	)
