@@ -1,56 +1,55 @@
 import { SandpackLayout, SandpackPreview, SandpackProvider } from '@codesandbox/sandpack-react'
+import bime from '@mike.pete/bime'
 import { useCallback, useEffect, useState } from 'react'
+import useGenerateHTML from '../hooks/useGenerateHTML'
 import useWindowResizeListener from '../hooks/useWindowResizeListener'
-import Canvas from './Canvas'
 import { useLayout } from '../stores/useLayout'
+import Canvas from './Canvas'
 
 function Runner() {
-	const layout = useLayout((state) => state.layout)
-	
-		console.log(layout)
-	
-		const x = (id: string, level = 1): string => {
-			const children = layout[id].children.map((childID) => x(childID, level + 1)) ?? []
-			const styles = layout[id].style
-	
-			let childString = ``
-	
-			const tab = '\t'.repeat(level)
-	
-			if (children.length > 0) {
-				childString = `\n${tab}${children.join(`\n${tab}`)}\n${'\t'.repeat(level-1)}`
-			}
-			
-	
-			return `<div style={${JSON.stringify(styles)}}>${childString}</div>`
-		}
+	const html = useGenerateHTML()
+	const [count, setCount] = useState(0)
+	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
+
+	useEffect(() => {
+		const selectComponent = (id: string) => setSelectedBlockID(id)
+
+		const model = { selectComponent }
+		const listener = bime.listen(model, '*')
+
+		return listener.cleanup
+	}, [setSelectedBlockID])
+
+	console.log('count', count)
+
 	return (
 		<SandpackProvider
 			options={{
 				externalResources: ['https://cdn.tailwindcss.com'],
 			}}
 			template={'react'}
+			customSetup={{
+				dependencies: {
+					'@mike.pete/bime': 'latest',
+					clsx: 'latest',
+				},
+			}}
 			files={{
 				'App.js': `
-			import { useEffect } from 'react'
-		export default function Page() {
-		useEffect(() => {
-		setInterval(() => {
-window.parent.postMessage({
-type: 'PERIODIC_MESSAGE',
-timestamp: new Date().toISOString(),
-data: 'Hello from interval!'
-}, '*');
-}, 5000);
+import bime from '@mike.pete/bime'
+import clsx from 'clsx';
+import { useEffect, useState } from 'react'
 
+export default function Page() {
+	const remote = bime.remote(window.parent, '*')
+	const [selectedComponent, setSelectedComponent] = useState('root')
 
-}, [])
-			return (
-				<>
-				${x('root')}
-				</>
-				)
-				}
+	return (
+		<>
+			${html}
+		</>
+	)
+}
 				`,
 			}}
 		>
@@ -65,8 +64,10 @@ data: 'Hello from interval!'
 						/>
 					</div>
 				</div>
-				{/* <SandpackFileExplorer />
-		<SandpackCodeEditor /> */}
+				{/* 
+				<SandpackFileExplorer />
+				<SandpackCodeEditor /> 
+				*/}
 			</SandpackLayout>
 		</SandpackProvider>
 	)
@@ -95,7 +96,9 @@ const Preview: React.FC = () => {
 				<Canvas maxWidth={maxWidth} />
 			</div>
 
-			<div className='h-full w-full bg-neutral-700'><Runner /></div>
+			<div className='h-full w-full bg-neutral-700'>
+				<Runner />
+			</div>
 		</div>
 	)
 }
