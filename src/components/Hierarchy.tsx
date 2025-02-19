@@ -1,12 +1,41 @@
+import 'material-symbols'
 import { useState } from 'react'
 import { RootBlockId } from '../constants/const'
-import 'material-symbols'
 import { useLayout } from '../stores/useLayout'
+
+const GenHTML: React.FC<{
+	id: string
+}> = ({ id }) => {
+	const layout = useLayout((state) => state.layout)
+
+	console.log(layout)
+
+	const x = (id: string, level = 1): string => {
+		const children = layout[id].children.map((childID) => x(childID, level + 1)) ?? []
+		const styles = layout[id].style
+
+		let childString = ``
+
+		const tab = '\t'.repeat(level)
+
+		if (children.length > 0) {
+			childString = `\n${tab}${children.join(`\n${tab}`)}\n${'\t'.repeat(level-1)}`
+		}
+		
+
+		return `<div style={${JSON.stringify(styles)}}>${childString}</div>`
+	}
+
+	// console.log(x(id))
+
+	return <p className='whitespace-pre-wrap'>{x(id)}</p>
+}
 
 const Hierarchy: React.FC = () => {
 	return (
 		<div className='h-fill w-[300px] bg-neutral-900 flex-shrink-0 text-neutral-300 p-1 overflow-auto custom-scrollbar'>
 			<Level id={RootBlockId} />
+			<GenHTML id={RootBlockId} />
 		</div>
 	)
 }
@@ -45,9 +74,7 @@ const Level: React.FC<{
 			>
 				{children.length > 0 ? (
 					<span
-						className={`material-symbols-outlined cursor-pointer ${
-							!expanded && 'rotate-[-90deg]'
-						}`}
+						className={`material-symbols-outlined cursor-pointer ${!expanded && 'rotate-[-90deg]'}`}
 						onClick={toggleExpanded}
 					>
 						arrow_drop_down
