@@ -8,7 +8,6 @@ import Canvas from './Canvas'
 
 function Runner() {
 	const html = useGenerateHTML()
-	const [count, setCount] = useState(0)
 	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
 
 	useEffect(() => {
@@ -19,8 +18,6 @@ function Runner() {
 
 		return listener.cleanup
 	}, [setSelectedBlockID])
-
-	console.log('count', count)
 
 	return (
 		<SandpackProvider

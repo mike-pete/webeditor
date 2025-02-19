@@ -3,6 +3,7 @@ import { useLayout } from "../stores/useLayout"
 
 const useGenerateHTML = () => {
 	const layout = useLayout((state) => state.layout)
+	console.log('layout', Object.keys(layout).length)
 	const generateHTML = useCallback(
 		(id = 'root', level = 1): string => {
 			const children = layout[id].children.map((childID) => generateHTML(childID, level + 1)) ?? []
