@@ -10,16 +10,9 @@ type State = {
 }
 type Action = {
 	setSelectedBlockID: (id: string) => void
-	addChildBlock: (
-		parentBlockID?: string,
-		childIndex?: number,
-		block?: Partial<BlockShape>
-	) => void
+	addChildBlock: (parentBlockID?: string, childIndex?: number, block?: Partial<BlockShape>) => void
 	updateBlock: (id: string, block: Partial<BlockShape>) => void
-	traverseBlockAndAllChildBlocks: (
-		id: string,
-		callback?: (block: BlockShape) => void
-	) => void
+	traverseBlockAndAllChildBlocks: (id: string, callback?: (block: BlockShape) => void) => void
 	deepDeleteBlock: (blockID: string) => void
 	deepDuplicateBlock: (blockID: string) => void
 }
@@ -78,7 +71,7 @@ export const useLayout = create<State & Action>((set, get) => ({
 		const toTraverse = new Set([id])
 
 		while (toTraverse.size > 0) {
-			const currentBlockID = toTraverse.values().next().value
+			const currentBlockID = toTraverse.values().next().value ?? ''
 			toTraverse.delete(currentBlockID)
 
 			const currentBlock = get().layout[currentBlockID]
@@ -103,9 +96,9 @@ export const useLayout = create<State & Action>((set, get) => ({
 		if (block?.parent) {
 			if (newLayout[block.parent]) {
 				// remove block from parent's children array
-				newLayout[block.parent].children = newLayout[
-					block.parent
-				].children.filter((childID) => childID !== id)
+				newLayout[block.parent].children = newLayout[block.parent].children.filter(
+					(childID) => childID !== id
+				)
 			}
 		}
 
@@ -123,9 +116,7 @@ export const useLayout = create<State & Action>((set, get) => ({
 		const block = get().layout[id]
 		const parentBlockID = block?.parent ?? RootBlockId
 
-		const originalIDtoNewID = new Map<string, string>([
-			[parentBlockID, parentBlockID],
-		])
+		const originalIDtoNewID = new Map<string, string>([[parentBlockID, parentBlockID]])
 		const newBlocks = new Map<string, BlockShape>()
 
 		// duplicate blocks
@@ -157,9 +148,7 @@ export const useLayout = create<State & Action>((set, get) => ({
 
 				// insert duplicated block at correct position in parent's children
 				const newChildren = [...parentBlock.children]
-				const insertionIndex = newChildren.findIndex(
-					(childId) => childId === id
-				)
+				const insertionIndex = newChildren.findIndex((childId) => childId === id)
 
 				if (insertionIndex !== -1) {
 					newChildren.splice(insertionIndex + 1, 0, duplicatedBlockID)

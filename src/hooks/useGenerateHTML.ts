@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
 import { useLayout } from '../stores/useLayout'
 
-const useGenerateHTML = (enviornment: 'design' | 'preview' = 'design') => {
+const useGenerateHTML = (environment: 'design' | 'preview' = 'design') => {
 	const layout = useLayout((state) => state.layout)
 	console.log('layout', Object.keys(layout).length)
 	const generateHTML = useCallback(
 		(id = 'root', level = 1): string => {
 			const children = layout[id].children.map((childID) => generateHTML(childID, level + 1)) ?? []
-			const styles = layout[id].style
+			const { style, tailwind } = layout[id]
 
 			let childString = ``
 
@@ -17,8 +17,8 @@ const useGenerateHTML = (enviornment: 'design' | 'preview' = 'design') => {
 				childString = `\n${tab}${children.join(`\n${tab}`)}\n${'\t'.repeat(level - 1)}`
 			}
 
-			if (enviornment === 'preview') {
-				return `<div style={${JSON.stringify(styles)}}>${childString}</div>`
+			if (environment === 'preview') {
+				return `<div style={${JSON.stringify(style)}}>${childString}</div>`
 			}
 
 			return `
@@ -29,11 +29,11 @@ const useGenerateHTML = (enviornment: 'design' | 'preview' = 'design') => {
 			setSelectedComponent('${id}')
 		}
 	} className={clsx('contents cursor-pointer', selectedComponent === '${id}' && '[&>*]:outline [&>*]:outline-4 [&>*]:outline-offset-[-4px] [&>*]:outline-sky-500')}>
-	<div style={${JSON.stringify(styles)}}>${childString}</div>
+	<div style={${JSON.stringify(style)}} className="${tailwind}">${childString}</div>
 </span>
 `
 		},
-		[layout]
+		[environment, layout]
 	)
 
 	return generateHTML()

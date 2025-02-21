@@ -3,6 +3,7 @@ export type BlockShape = {
 	style?: Style
 	children: string[]
 	parent: string
+	tailwind: string
 }
 
 export type Style = BaseStyle | (BaseStyle & FlexContainer) | Record<string, string | string[]>
@@ -16,7 +17,6 @@ export type BaseStyle = {
 	maxHeight: string
 	margin: string
 	padding: string
-	background: string
 	overflow: string
 	borderRadius: string
 	flexShrink: string

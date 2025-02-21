@@ -10,7 +10,6 @@ import {
 import { BaseStyle } from '../types/global'
 
 export const defaultBlockStyle: BaseStyle = {
-	background: 'rgba(156, 163, 175, 0.5)',
 	minWidth: '50px',
 	minHeight: '50px',
 	maxHeight: '',
@@ -24,13 +23,6 @@ export const defaultBlockStyle: BaseStyle = {
 	flexShrink: '0',
 	flexGrow: '0',
 	display: 'block',
-}
-
-export const defaultBlock: BlockShape = {
-	id: '',
-	style: defaultBlockStyle,
-	children: [],
-	parent: '',
 }
 
 export const defaultRootStyle = {
