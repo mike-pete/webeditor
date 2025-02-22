@@ -3,11 +3,10 @@ import { useLayout } from '../stores/useLayout'
 
 const useGenerateHTML = (environment: 'design' | 'preview' = 'design') => {
 	const layout = useLayout((state) => state.layout)
-	console.log('layout', Object.keys(layout).length)
 	const generateHTML = useCallback(
 		(id = 'root', level = 1): string => {
 			const children = layout[id].children.map((childID) => generateHTML(childID, level + 1)) ?? []
-			const { style, tailwind } = layout[id]
+			const { tailwind } = layout[id]
 
 			let childString = ``
 
@@ -18,7 +17,7 @@ const useGenerateHTML = (environment: 'design' | 'preview' = 'design') => {
 			}
 
 			if (environment === 'preview') {
-				return `<div style={${JSON.stringify(style)}}>${childString}</div>`
+				return `<div className="${tailwind}">${childString}</div>`
 			}
 
 			return `
@@ -29,7 +28,7 @@ const useGenerateHTML = (environment: 'design' | 'preview' = 'design') => {
 			setSelectedComponent('${id}')
 		}
 	} className={clsx('contents cursor-pointer', selectedComponent === '${id}' && '[&>*]:outline [&>*]:outline-4 [&>*]:outline-offset-[-4px] [&>*]:outline-sky-500')}>
-	<div style={${JSON.stringify(style)}} className="${tailwind}">${childString}</div>
+	<div className="${tailwind}">${childString}</div>
 </span>
 `
 		},

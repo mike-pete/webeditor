@@ -1,18 +1,22 @@
 import { create } from 'zustand'
 import { RootBlockId } from '../constants/const'
-import { BlockShape } from '../types/global'
+import { ComponentShape } from '../types/global'
 import initialLayout from './initialLayout'
 import { createNewBlock } from './useLayout.utils'
 
 type State = {
 	selectedBlockID: string
-	layout: Record<string, BlockShape>
+	layout: Record<string, ComponentShape>
 }
 type Action = {
 	setSelectedBlockID: (id: string) => void
-	addChildBlock: (parentBlockID?: string, childIndex?: number, block?: Partial<BlockShape>) => void
-	updateBlock: (id: string, block: Partial<BlockShape>) => void
-	traverseBlockAndAllChildBlocks: (id: string, callback?: (block: BlockShape) => void) => void
+	addChildBlock: (
+		parentBlockID?: string,
+		childIndex?: number,
+		block?: Partial<ComponentShape>
+	) => void
+	updateBlock: (id: string, block: Partial<ComponentShape>) => void
+	traverseBlockAndAllChildBlocks: (id: string, callback?: (block: ComponentShape) => void) => void
 	deepDeleteBlock: (blockID: string) => void
 	deepDuplicateBlock: (blockID: string) => void
 }
@@ -117,7 +121,7 @@ export const useLayout = create<State & Action>((set, get) => ({
 		const parentBlockID = block?.parent ?? RootBlockId
 
 		const originalIDtoNewID = new Map<string, string>([[parentBlockID, parentBlockID]])
-		const newBlocks = new Map<string, BlockShape>()
+		const newBlocks = new Map<string, ComponentShape>()
 
 		// duplicate blocks
 		get().traverseBlockAndAllChildBlocks(id, (block) => {
