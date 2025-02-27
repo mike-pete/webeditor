@@ -15,6 +15,7 @@
   "dependencies": {
     "@codesandbox/sandpack-react": "^2.20.0",
     "@mike.pete/bime": "^0.1.0",
+    "deepmerge": "^4.3.1",
     "material-symbols": "^0.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

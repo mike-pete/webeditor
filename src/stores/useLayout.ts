@@ -1,8 +1,8 @@
+import deepmerge from 'deepmerge'
 import { create } from 'zustand'
-import { RootBlockId } from '../constants/const'
 import { ComponentShape } from '../types/global'
 import initialLayout from './initialLayout'
-import { createNewBlock } from './useLayout.utils'
+// import { createNewBlock } from './useLayout.utils'
 
 type State = {
 	selectedBlockID: string
@@ -10,15 +10,15 @@ type State = {
 }
 type Action = {
 	setSelectedBlockID: (id: string) => void
-	addChildBlock: (
-		parentBlockID?: string,
-		childIndex?: number,
-		block?: Partial<ComponentShape>
-	) => void
+	// addChildBlock: (
+	// 	parentBlockID?: string,
+	// 	childIndex?: number,
+	// 	block?: Partial<ComponentShape>
+	// ) => void
 	updateBlock: (id: string, block: Partial<ComponentShape>) => void
-	traverseBlockAndAllChildBlocks: (id: string, callback?: (block: ComponentShape) => void) => void
-	deepDeleteBlock: (blockID: string) => void
-	deepDuplicateBlock: (blockID: string) => void
+	// traverseBlockAndAllChildBlocks: (id: string, callback?: (block: ComponentShape) => void) => void
+	// deepDeleteBlock: (blockID: string) => void
+	// deepDuplicateBlock: (blockID: string) => void
 }
 
 export const useLayout = create<State & Action>((set, get) => ({
@@ -28,152 +28,158 @@ export const useLayout = create<State & Action>((set, get) => ({
 
 	// ACTIONS
 	setSelectedBlockID: (id) => set(() => ({ selectedBlockID: id })),
-	addChildBlock: (parentBlockID, childIndex, block) => {
-		// make sure parent block is valid
-		const selectedBlockID = get().selectedBlockID
-		parentBlockID = parentBlockID ?? selectedBlockID
-		const parentBlock = get().layout[parentBlockID]
+	// addChildBlock: (parentBlockID, childIndex, block) => {
+	// 	// make sure parent block is valid
+	// 	const selectedBlockID = get().selectedBlockID
+	// 	parentBlockID = parentBlockID ?? selectedBlockID
+	// 	const parentBlock = get().layout[parentBlockID]
 
-		if (!parentBlock) {
-			console.error(`block [${parentBlockID}] not found`)
-			return
-		}
+	// 	if (!parentBlock) {
+	// 		console.error(`block [${parentBlockID}] not found`)
+	// 		return
+	// 	}
 
-		const newBlock = createNewBlock({ ...block, parent: parentBlockID })
+	// 	if ('children' in parentBlock.props) {
+	// 		const newBlock = createNewBlock()
+	// 		Object.assign(newBlock, { ...block, parent: parentBlockID, id: newBlock.id })
 
-		// insert new block id into parent's children array
-		const newParentChildren = [...parentBlock.children]
-		if (childIndex !== undefined && childIndex > -1) {
-			newParentChildren.splice(childIndex, 0, newBlock.id)
-		} else {
-			newParentChildren.push(newBlock.id)
-		}
+	// 		// insert new block id into parent's children array
+	// 		const newParentChildren = [...parentBlock.props.children]
+	// 		if (childIndex !== undefined && childIndex > -1) {
+	// 			newParentChildren.splice(childIndex, 0, newBlock.id)
+	// 		} else {
+	// 			newParentChildren.push(newBlock.id)
+	// 		}
 
-		set((state) => ({
-			layout: {
-				...state.layout,
-				[newBlock.id]: newBlock,
-				[parentBlockID as string]: {
-					...parentBlock,
-					children: newParentChildren,
-				},
-			},
-		}))
+	// 		set((state) => ({
+	// 			layout: {
+	// 				...state.layout,
+	// 				[newBlock.id]: newBlock,
+	// 				[parentBlockID as string]: {
+	// 					...parentBlock,
+	// 					children: newParentChildren,
+	// 				},
+	// 			},
+	// 		}))
+	// 	}
+	// },
+	updateBlock: (id, blockDetails) => {
+		set((state) => {
+			const layout = state.layout
+			const origBlock = layout[id]
+			const newBlockDetails = deepmerge(origBlock, blockDetails)
+			const updatedLayout = {
+				...layout,
+				[id]: newBlockDetails,
+			}
+			return { ...state, layout: updatedLayout }
+		})
+		console.log('todo')
 	},
-	updateBlock: (id, block) =>
-		set((state) => ({
-			layout: {
-				...state.layout,
-				[id]: {
-					...state.layout[id],
-					...block,
-				},
-			},
-		})),
 	// breadth-first traversal of block and all its children
-	traverseBlockAndAllChildBlocks: (id, callback) => {
-		const toTraverse = new Set([id])
+	// traverseBlockAndAllChildBlocks: (id, callback) => {
+	// 	const toTraverse = new Set([id])
 
-		while (toTraverse.size > 0) {
-			const currentBlockID = toTraverse.values().next().value ?? ''
-			toTraverse.delete(currentBlockID)
+	// 	while (toTraverse.size > 0) {
+	// 		const currentBlockID = toTraverse.values().next().value ?? ''
+	// 		toTraverse.delete(currentBlockID)
 
-			const currentBlock = get().layout[currentBlockID]
-			if (currentBlock) {
-				currentBlock.children.forEach((childID) => {
-					toTraverse.add(childID)
-				})
-				callback?.(currentBlock)
-			}
-		}
-	},
-	deepDeleteBlock: (id: string) => {
-		const block = get().layout[id]
-		let selectedBlockID = get().selectedBlockID
+	// 		const currentBlock = get().layout[currentBlockID]
+	// 		if (currentBlock) {
+	// 			currentBlock.children.forEach((childID) => {
+	// 				toTraverse.add(childID)
+	// 			})
+	// 			callback?.(currentBlock)
+	// 		}
+	// 	}
+	// },
+	// deepDeleteBlock: (id: string) => {
+	// 	const block = get().layout[id]
+	// 	let selectedBlockID = get().selectedBlockID
 
-		// create a new layout and remove sub-blocks
-		const newLayout = get().layout
-		get().traverseBlockAndAllChildBlocks(id, (block) => {
-			delete newLayout[block.id]
-		})
+	// 	// create a new layout and remove sub-blocks
+	// 	const newLayout = get().layout
+	// 	get().traverseBlockAndAllChildBlocks(id, (block) => {
+	// 		delete newLayout[block.id]
+	// 	})
 
-		if (block?.parent) {
-			if (newLayout[block.parent]) {
-				// remove block from parent's children array
-				newLayout[block.parent].children = newLayout[block.parent].children.filter(
-					(childID) => childID !== id
-				)
-			}
-		}
+	// 	if (block?.parent) {
+	// 		if (newLayout[block.parent]) {
+	// 			// remove block from parent's children array
+	// 			newLayout[block.parent].children = newLayout[block.parent].children.filter(
+	// 				(childID) => childID !== id
+	// 			)
+	// 		}
+	// 	}
 
-		// if the selected block was deleted select a new block
-		if (!(selectedBlockID in newLayout)) {
-			selectedBlockID = block?.parent ?? RootBlockId
-		}
+	// 	// if the selected block was deleted select a new block
+	// 	if (!(selectedBlockID in newLayout)) {
+	// 		selectedBlockID = block?.parent ?? RootBlockId
+	// 	}
 
-		set(() => ({
-			selectedBlockID,
-			layout: newLayout,
-		}))
-	},
-	deepDuplicateBlock: (id: string) => {
-		const block = get().layout[id]
-		const parentBlockID = block?.parent ?? RootBlockId
+	// 	set(() => ({
+	// 		selectedBlockID,
+	// 		layout: newLayout,
+	// 	}))
+	// },
+	// deepDuplicateBlock: (id: string) => {
+	// 	const block = get().layout[id]
+	// 	const parentBlockID = block?.parent ?? RootBlockId
 
-		const originalIDtoNewID = new Map<string, string>([[parentBlockID, parentBlockID]])
-		const newBlocks = new Map<string, ComponentShape>()
+	// 	const originalIDtoNewID = new Map<string, string>([[parentBlockID, parentBlockID]])
+	// 	const newBlocks = new Map<string, ComponentShape>()
 
-		// duplicate blocks
-		get().traverseBlockAndAllChildBlocks(id, (block) => {
-			const parentID = originalIDtoNewID.get(block.parent) ?? RootBlockId
-			const parent = newBlocks.get(parentID)
+	// 	// duplicate blocks
+	// 	get().traverseBlockAndAllChildBlocks(id, (block) => {
+	// 		const parentID = originalIDtoNewID.get(block.parent) ?? RootBlockId
+	// 		const parent = newBlocks.get(parentID)
 
-			const newBlock = createNewBlock({
-				...block,
-				parent: parentID,
-				children: [],
-			})
+	// 		const newBlock = createNewBlock({
+	// 			...block,
+	// 			parent: parentID,
+	// 			children: [],
+	// 		})
 
-			originalIDtoNewID.set(block.id, newBlock.id)
+	// 		originalIDtoNewID.set(block.id, newBlock.id)
 
-			if (parent) {
-				parent.children.push(newBlock.id)
-			}
+	// 		if (parent) {
+	// 			parent.children.push(newBlock.id)
+	// 		}
 
-			newBlocks.set(newBlock.id, newBlock)
-		})
+	// 		newBlocks.set(newBlock.id, newBlock)
+	// 	})
 
-		const parentBlock = get().layout[parentBlockID]
-		const duplicatedBlockID = originalIDtoNewID.get(id)
+	// 	const parentBlock = get().layout[parentBlockID]
+	// 	const duplicatedBlockID = originalIDtoNewID.get(id)
 
-		if (parentBlock && duplicatedBlockID) {
-			set(() => {
-				const newLayout = get().layout
+	// 	if (parentBlock && duplicatedBlockID) {
+	// 		set(() => {
+	// 			const newLayout = get().layout
 
-				// insert duplicated block at correct position in parent's children
-				const newChildren = [...parentBlock.children]
-				const insertionIndex = newChildren.findIndex((childId) => childId === id)
+	// 			// insert duplicated block at correct position in parent's children
+	// 			const newChildren = [...parentBlock.children]
+	// 			const insertionIndex = newChildren.findIndex((childId) => childId === id)
 
-				if (insertionIndex !== -1) {
-					newChildren.splice(insertionIndex + 1, 0, duplicatedBlockID)
-				} else {
-					newChildren.push(duplicatedBlockID)
-				}
+	// 			if (insertionIndex !== -1) {
+	// 				newChildren.splice(insertionIndex + 1, 0, duplicatedBlockID)
+	// 			} else {
+	// 				newChildren.push(duplicatedBlockID)
+	// 			}
 
-				newLayout[parentBlockID] = {
-					...parentBlock,
-					children: newChildren,
-				}
+	// 			newLayout[parentBlockID] = {
+	// 				...parentBlock,
+	// 				children: newChildren,
+	// 			}
 
-				// insert new blocks into layout
-				newBlocks.forEach((block) => {
-					newLayout[block.id] = block
-				})
+	// 			// insert new blocks into layout
+	// 			newBlocks.forEach((block) => {
+	// 				newLayout[block.id] = block
+	// 			})
 
-				return {
-					layout: newLayout,
-				}
-			})
-		}
-	},
+	// 			return {
+	// 				layout: newLayout,
+	// 			}
+	// 		})
+	// 	}
+	// },
 }))

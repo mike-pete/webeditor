@@ -17,18 +17,19 @@ const Hierarchy: React.FC = () => {
 const Level: React.FC<{
 	id: string
 }> = ({ id }) => {
-	const children = useLayout((state) => state.layout[id].children)
-	const addChildBlock = useLayout((state) => state.addChildBlock)
+	const props = useLayout((state) => state.layout[id].props)
+	// const addChildBlock = useLayout((state) => state.addChildBlock)
 	const selectedBlockID = useLayout((state) => state.selectedBlockID)
 	const setSelectedBlockID = useLayout((state) => state.setSelectedBlockID)
-	const deepDeleteBlock = useLayout((state) => state.deepDeleteBlock)
-	const deepDuplicateBlock = useLayout((state) => state.deepDuplicateBlock)
+	// const deepDeleteBlock = useLayout((state) => state.deepDeleteBlock)
+	// const deepDuplicateBlock = useLayout((state) => state.deepDuplicateBlock)
 
 	const [expanded, setExpanded] = useState(true)
 
-	if (!children) {
+	if (!('children' in props)) {
 		return null
 	}
+	const { children } = props
 
 	const toggleExpanded = () => {
 		setExpanded((prev) => !prev)
@@ -61,7 +62,7 @@ const Level: React.FC<{
 					{children.length ? 'view_comfy_alt' : 'square'}
 				</span>
 				<p className='ml-2 flex-grow'>block</p>
-				<span
+				{/* <span
 					className='material-symbols-outlined text-sm hidden group-hover:block'
 					onClick={(event) => {
 						event.stopPropagation()
@@ -69,8 +70,8 @@ const Level: React.FC<{
 					}}
 				>
 					add
-				</span>
-				{id !== RootBlockId && (
+				</span> */}
+				{/* {id !== RootBlockId && (
 					<>
 						<span
 							className='material-symbols-outlined text-sm hidden group-hover:block'
@@ -91,7 +92,7 @@ const Level: React.FC<{
 							delete
 						</span>
 					</>
-				)}
+				)} */}
 			</div>
 			{expanded && (
 				<div className='ml-5'>
